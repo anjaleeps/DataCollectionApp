@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <EditText
+        android:id="@+id/editFieldName"
+        android:layout_width="198dp"
+        android:layout_height="51dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:ems="10"
+        android:hint="Enter field name"
+        android:inputType="textPersonName"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Spinner
+        android:id="@+id/spinnerDataType"
+        android:layout_width="161dp"
+        android:layout_height="53dp"
+        android:layout_marginStart="20dp"
+        android:clickable="true"
+        android:dropDownWidth="wrap_content"
+        android:dropDownSelector="@drawable/ic_baseline_arrow_drop_down_24"
+        android:spinnerMode="dropdown"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/editFieldName"
+        app:layout_constraintTop_toTopOf="@+id/editFieldName" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

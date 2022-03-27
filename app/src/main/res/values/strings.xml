@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">DataCollectionApp</string>
+    <string-array name="data_types">
+        <item>text</item>
+        <item>number</item>
+        <item>audio</item>
+        <item>image</item>
+        <item>location</item>
+    </string-array>
 </resources>
