@@ -1,4 +1,4 @@
-package com.example.datacollectionapp.adapters;
+package com.example.datacollectionapp.screens.formtemplate;
 
 import android.content.Context;
 import android.text.Editable;
@@ -15,12 +15,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.datacollectionapp.R;
-import com.example.datacollectionapp.database.connectionmanagers.ProjectFirestoreManager;
 import com.example.datacollectionapp.models.DataType;
 import com.example.datacollectionapp.models.TemplateField;
-import com.example.datacollectionapp.screens.newformtemplate.NewFormTemplateActivity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class TemplateFieldAdapter extends RecyclerView.Adapter<TemplateFieldAdapter.TemplateFieldViewHolder> {

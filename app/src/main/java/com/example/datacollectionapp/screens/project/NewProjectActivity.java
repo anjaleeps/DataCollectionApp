@@ -1,6 +1,5 @@
-package com.example.datacollectionapp.screens.newproject;
+package com.example.datacollectionapp.screens.project;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -12,8 +11,7 @@ import android.widget.Toast;
 import com.example.datacollectionapp.R;
 import com.example.datacollectionapp.database.connectionmanagers.ProjectFirestoreManager;
 import com.example.datacollectionapp.models.Project;
-import com.example.datacollectionapp.screens.newformtemplate.NewFormTemplateActivity;
-import com.google.firebase.firestore.DocumentReference;
+import com.example.datacollectionapp.screens.formtemplate.NewFormTemplateActivity;
 
 public class NewProjectActivity extends AppCompatActivity {
 
@@ -39,17 +37,11 @@ public class NewProjectActivity extends AppCompatActivity {
         final Project project = new Project();
         project.setUsername("user1");
         project.setProjectName(newProjectName);
-        projectFirestoreManager.createProject(project, task -> {
+        String projectId = projectFirestoreManager.createProject(project);
+        project.setProjectId(projectId);
 
-            if (task.isSuccessful() && task.getResult() != null) {
-                DocumentReference documentReference = task.getResult();
-                project.setTaskId(documentReference.getId());
-                Intent templateIntent = new Intent(NewProjectActivity.this, NewFormTemplateActivity.class);
-                templateIntent.putExtra(NewFormTemplateActivity.PROJECT_DATA, project);
-                startActivity(templateIntent);
-            } else {
-                Toast.makeText(NewProjectActivity.this, "Couldn't save the project! Please try again", Toast.LENGTH_SHORT).show();
-            }
-        });
+        Intent templateIntent = new Intent(NewProjectActivity.this, NewFormTemplateActivity.class);
+        templateIntent.putExtra(NewFormTemplateActivity.PROJECT_DATA, project);
+        startActivity(templateIntent);
     }
 }

@@ -18,7 +18,7 @@ public class Project implements Serializable {
         return projectId;
     }
 
-    public void setTaskId(String projectId) {
+    public void setProjectId(String projectId) {
         this.projectId = projectId;
     }
 

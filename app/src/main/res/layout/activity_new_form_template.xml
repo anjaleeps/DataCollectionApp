@@ -4,11 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".screens.newformtemplate.NewFormTemplateActivity">
+    tools:context=".screens.formtemplate.NewFormTemplateActivity">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/fieldsRecycleView"
-        android:layout_width="363dp"
+        android:layout_width="352dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginBottom="40dp"

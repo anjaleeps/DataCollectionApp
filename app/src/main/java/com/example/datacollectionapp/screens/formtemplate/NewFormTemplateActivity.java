@@ -1,6 +1,5 @@
-package com.example.datacollectionapp.screens.newformtemplate;
+package com.example.datacollectionapp.screens.formtemplate;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -8,17 +7,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.datacollectionapp.R;
-import com.example.datacollectionapp.adapters.TemplateFieldAdapter;
 import com.example.datacollectionapp.database.connectionmanagers.ProjectFirestoreManager;
 import com.example.datacollectionapp.models.Project;
 import com.example.datacollectionapp.models.TemplateField;
 import com.example.datacollectionapp.screens.projectlist.ProjectListActivity;
-import com.google.android.gms.tasks.OnFailureListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +32,9 @@ public class NewFormTemplateActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_form_template);
 
+        Intent intent = getIntent();
+        project = (Project) intent.getSerializableExtra(PROJECT_DATA);
+
         setProjectName();
         templateFields.addAll(project.getFormTemplate());
         projectFirestoreManager = ProjectFirestoreManager.getInstance();
@@ -44,9 +42,7 @@ public class NewFormTemplateActivity extends AppCompatActivity {
     }
 
     public void setProjectName() {
-        Intent intent = getIntent();
         TextView textProjectName = findViewById(R.id.textProjectName);
-        project = (Project) intent.getSerializableExtra(PROJECT_DATA);
         textProjectName.setText(project.getProjectName());
     }
 
@@ -75,13 +71,8 @@ public class NewFormTemplateActivity extends AppCompatActivity {
             }
         }
         project.setFormTemplate(newTemplateFields);
-        projectFirestoreManager.updateProject(project, task -> {
-            if (task.isSuccessful()) {
-                Intent templateIntent = new Intent(NewFormTemplateActivity.this, ProjectListActivity.class);
-                startActivity(templateIntent);
-            } else {
-                Toast.makeText(NewFormTemplateActivity.this, "Couldn't save the template! Please try again", Toast.LENGTH_SHORT).show();
-            }
-        });
+        projectFirestoreManager.updateProject(project);
+        Intent templateIntent = new Intent(this, ProjectListActivity.class);
+        startActivity(templateIntent);
     }
 }

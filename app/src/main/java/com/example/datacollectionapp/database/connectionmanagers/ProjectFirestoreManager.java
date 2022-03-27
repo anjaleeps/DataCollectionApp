@@ -1,13 +1,11 @@
 package com.example.datacollectionapp.database.connectionmanagers;
 
-import android.media.MediaPlayer;
-
 import com.example.datacollectionapp.database.contracts.ProjectFirestoreContract;
 import com.example.datacollectionapp.models.Project;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -29,8 +27,17 @@ public class ProjectFirestoreManager {
         return projectFirestoreManager;
     }
 
-    public void createProject(Project project, OnCompleteListener<DocumentReference> onCompleteListener) {
-        collectionReference.add(project).addOnCompleteListener(onCompleteListener);
+    public String createProject(Project project) {
+        DocumentReference documentReference = collectionReference.document();
+        documentReference.set(project);
+        return documentReference.getId();
+    }
+
+    public void getProjectById(String projectId, OnCompleteListener<DocumentSnapshot> onCompleteListener) {
+        collectionReference
+                .document(projectId)
+                .get()
+                .addOnCompleteListener(onCompleteListener);
     }
 
     public void getAllProjectsByUser(OnCompleteListener<QuerySnapshot> onCompleteListener, String username) {
@@ -40,10 +47,10 @@ public class ProjectFirestoreManager {
                 .addOnCompleteListener(onCompleteListener);
     }
 
-    public void updateProject(Project project, OnCompleteListener<Void> onCompleteListener) {
+    public void updateProject(Project project) {
         String projectId = project.getProjectId();
         DocumentReference documentReference = collectionReference.document(projectId);
-        documentReference.set(project).addOnCompleteListener(onCompleteListener);
+        documentReference.set(project);
     }
 
     public void deleteProject(String projectId) {
