@@ -9,15 +9,18 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.DataCollectionApp">
-        <activity android:name=".screens.newrecord.NewRecordActivity"/>
-        <activity android:name=".screens.newformtemplate.NewFormTemplateActivity" />
-        <activity android:name=".screens.projectrecords.ProjectRecordsActivity" />
-        <activity android:name=".screens.newproject.NewProjectActivity">
+        <activity android:name=".screens.record.NewRecordActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity android:name=".screens.formtemplate.NewFormTemplateActivity"
+            android:parentActivityName=".screens.project.NewProjectActivity"/>
+        <activity android:name=".screens.projectrecords.ProjectRecordsActivity" />
+        <activity android:name=".screens.project.NewProjectActivity">
+
         </activity>
         <activity android:name=".screens.projectlist.ProjectListActivity" />
     </application>
