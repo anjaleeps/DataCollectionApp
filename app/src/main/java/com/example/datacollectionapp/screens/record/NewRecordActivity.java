@@ -1,14 +1,17 @@
 package com.example.datacollectionapp.screens.record;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.loader.content.CursorLoader;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.provider.OpenableColumns;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -33,9 +36,8 @@ import java.util.Objects;
 public class NewRecordActivity extends AppCompatActivity {
 
     public static final String PROJECT_ID = "PROJECT_ID";
-    public static final String VIEW_POSITION = "VIEW_POSITION";
     public static final int CHOOSE_IMAGE_REQUEST = 32;
-    public static final int UPLOAD_IMAGE_REQUEST = 64;
+    public static final int CHOOSE_AUDIO_REQUEST = 64;
 
     public static final String TAG = "NewRecordActivity";
 
@@ -64,7 +66,7 @@ public class NewRecordActivity extends AppCompatActivity {
         getFormTemplate();
     }
 
-    public void getFormTemplate() {
+    private void getFormTemplate() {
         projectFirestoreManager.getProjectById(projectId, task -> {
             if (task.isSuccessful() && task.getResult() != null) {
                 DocumentSnapshot documentSnapshot = task.getResult();
@@ -79,7 +81,7 @@ public class NewRecordActivity extends AppCompatActivity {
         });
     }
 
-    public void setupRecordRecycleView() {
+    private void setupRecordRecycleView() {
         recordRecycleView = findViewById(R.id.recordRecyclerView);
         recordRecycleView.setLayoutManager(new LinearLayoutManager(this));
         recordFieldAdapter = new RecordFieldAdapter(this, recordFields);
@@ -99,8 +101,6 @@ public class NewRecordActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, intent);
         int position;
 
-        System.out.println(requestCode);
-        System.out.println(CHOOSE_IMAGE_REQUEST & requestCode);
         if (resultCode == RESULT_OK && intent.getData() != null) {
             Uri filePath = intent.getData();
             if ((CHOOSE_IMAGE_REQUEST & requestCode) != 0) {
@@ -116,20 +116,16 @@ public class NewRecordActivity extends AppCompatActivity {
                 } catch (IOException e) {
                     Log.w(NewRecordActivity.TAG, "ERROR: IO exception while choosing the provided file", e);
                 }
+            } else if ((CHOOSE_AUDIO_REQUEST & requestCode) != 0) {
+                position = requestCode - CHOOSE_AUDIO_REQUEST;
+                System.out.println(position);
+                AudioRecordViewHolder audioRecordViewHolder =
+                        (AudioRecordViewHolder) recordRecycleView.findViewHolderForAdapterPosition(position);
+                assert audioRecordViewHolder != null;
+                audioRecordViewHolder.setAudio(filePath, getFileName(filePath));
+
             }
         }
-    }
-
-    public void uploadImage(Record record, Uri filePath, int position) {
-        firebaseStorageManager.uploadImage(filePath, task -> {
-            if (task.isSuccessful()) {
-                Uri imageUri = task.getResult();
-                recordFields.get(position).setValue(imageUri.toString());
-                recordFirestoreManager.updateRecord(record);
-            } else {
-                Log.w(NewRecordActivity.TAG, "ERROR: Failed to upload image", task.getException());
-            }
-        });
     }
 
     public void saveRecord(View view) {
@@ -141,17 +137,58 @@ public class NewRecordActivity extends AppCompatActivity {
         newRecord.setRecordId(recordId);
 
         for (int i = 0; i < recordFields.size(); i++) {
+            Uri filePath;
             RecordField recordField = recordFields.get(i);
             switch (recordField.getDataType()) {
                 case IMAGE:
-                    Uri filePath = ((ImageRecordViewHolder) Objects.requireNonNull(recordRecycleView.findViewHolderForAdapterPosition(i))).getFilePath();
-                    System.out.println(filePath.toString());
+                    filePath = ((ImageRecordViewHolder) Objects.requireNonNull(recordRecycleView.findViewHolderForAdapterPosition(i))).getFilePath();
                     if (filePath != null) {
                         uploadImage(newRecord, filePath, i);
+                    }
+                    break;
+                case AUDIO:
+                    filePath = ((AudioRecordViewHolder) Objects.requireNonNull(recordRecycleView.findViewHolderForAdapterPosition(i))).getFilePath();
+                    System.out.println(filePath.toString());
+                    if (filePath != null) {
+                        uploadAudio(newRecord, filePath, i);
                     }
             }
         }
         //Intent intent = new Intent(this, ProjectRecordsActivity.class);
         //startActivity(intent);
+    }
+
+    private void uploadImage(Record record, Uri filePath, int position) {
+        firebaseStorageManager.uploadImage(filePath, task -> {
+            if (task.isSuccessful()) {
+                Uri imageUri = task.getResult();
+                recordFields.get(position).setValue(imageUri.toString());
+                recordFirestoreManager.updateRecord(record);
+            } else {
+                Log.w(NewRecordActivity.TAG, "ERROR: Failed to upload image", task.getException());
+            }
+        });
+    }
+
+    private void uploadAudio(Record record, Uri filePath, int position) {
+        firebaseStorageManager.uploadAudio(filePath, task -> {
+            if (task.isSuccessful()) {
+                Uri audioUri = task.getResult();
+                recordFields.get(position).setValue(audioUri.toString());
+                recordFirestoreManager.updateRecord(record);
+            } else {
+                Log.w(NewRecordActivity.TAG, "ERROR: Failed to upload audio file", task.getException());
+            }
+        });
+    }
+
+    private String getFileName(Uri filePath) {
+        Cursor cursor = getContentResolver().query(filePath, null, null, null, null);
+        int nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+        cursor.moveToFirst();
+        String fileName = cursor.getString(nameIndex);
+        cursor.close();
+        System.out.println(fileName);
+        return fileName;
     }
 }

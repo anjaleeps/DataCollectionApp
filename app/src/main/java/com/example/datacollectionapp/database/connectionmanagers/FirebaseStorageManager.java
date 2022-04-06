@@ -42,4 +42,16 @@ public class FirebaseStorageManager {
                 })
                 .addOnCompleteListener(onCompleteListener);
     }
+
+    public void uploadAudio(Uri filePath, OnCompleteListener<Uri> onCompleteListener) {
+        StorageReference childReference = storageReference.child("audio/" + UUID.randomUUID().toString());
+        childReference.putFile(filePath)
+                .continueWithTask(task -> {
+                    if (!task.isSuccessful()) {
+                        throw task.getException();
+                    }
+                    return childReference.getDownloadUrl();
+                })
+                .addOnCompleteListener(onCompleteListener);
+    }
 }

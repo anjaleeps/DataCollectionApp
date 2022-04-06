@@ -24,7 +24,7 @@ public class ImageRecordViewHolder extends RecordViewHolder {
 
     public ImageRecordViewHolder(@NonNull View itemView, Context context, List<RecordField> recordFields) {
         super(itemView, itemView.findViewById(R.id.textFieldName), context, recordFields);
-        chooseButton = itemView.findViewById(R.id.buttonChoose);
+        chooseButton = itemView.findViewById(R.id.buttonChooseAudio);
         imageView = itemView.findViewById(R.id.imageView);
         chooseButton.setOnClickListener(this::chooseImage);
     }

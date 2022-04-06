@@ -40,13 +40,13 @@
             android:orientation="vertical">
 
             <Button
-                android:id="@+id/buttonChoose"
+                android:id="@+id/buttonChooseAudio"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_margin="2dp"
                 android:layout_weight="1"
                 android:text="Choose"
-                android:textSize="10dp" />
+                android:textSize="10sp" />
 
         </LinearLayout>
 
