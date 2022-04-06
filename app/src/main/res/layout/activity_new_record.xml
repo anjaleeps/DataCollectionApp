@@ -22,24 +22,22 @@
         android:id="@+id/buttonAddNewField"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="Add record"
+        android:layout_marginTop="284dp"
         android:onClick="saveRecord"
+        android:text="Add record"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="0.466"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayoutContainer" />
+        app:layout_constraintTop_toBottomOf="@+id/recordRecyclerView" />
 
-    <LinearLayout
-        android:id="@+id/linearLayoutContainer"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recordRecyclerView"
         android:layout_width="361dp"
-        android:layout_height="181dp"
-        android:layout_marginTop="52dp"
-        android:orientation="vertical"
+        android:layout_height="269dp"
+        android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.68"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView"></LinearLayout>
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

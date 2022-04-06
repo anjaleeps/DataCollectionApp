@@ -1,44 +1,54 @@
 package com.example.datacollectionapp.screens.record;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
-import android.text.InputType;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.datacollectionapp.R;
+import com.example.datacollectionapp.database.connectionmanagers.FirebaseStorageManager;
 import com.example.datacollectionapp.database.connectionmanagers.ProjectFirestoreManager;
 import com.example.datacollectionapp.database.connectionmanagers.RecordFirestoreManager;
-import com.example.datacollectionapp.models.DataType;
 import com.example.datacollectionapp.models.Project;
 import com.example.datacollectionapp.models.Record;
 import com.example.datacollectionapp.models.RecordField;
 import com.example.datacollectionapp.models.TemplateField;
-import com.example.datacollectionapp.screens.projectrecords.ProjectRecordsActivity;
 import com.google.firebase.firestore.DocumentSnapshot;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
 
 public class NewRecordActivity extends AppCompatActivity {
 
     public static final String PROJECT_ID = "PROJECT_ID";
-    private static final String TAG = "NewRecordActivity";
+    public static final String VIEW_POSITION = "VIEW_POSITION";
+    public static final int CHOOSE_IMAGE_REQUEST = 32;
+    public static final int UPLOAD_IMAGE_REQUEST = 64;
+
+    public static final String TAG = "NewRecordActivity";
 
     private String projectId;
     private String projectName;
+    private RecyclerView recordRecycleView;
+    private RecordFieldAdapter recordFieldAdapter;
     private List<TemplateField> formTemplate = new ArrayList<>();
     private HashMap<TemplateField, Integer> fieldIds = new HashMap<>();
+    private List<RecordField> recordFields = new ArrayList<>();
     private ProjectFirestoreManager projectFirestoreManager;
     private RecordFirestoreManager recordFirestoreManager;
+    private FirebaseStorageManager firebaseStorageManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,140 +60,98 @@ public class NewRecordActivity extends AppCompatActivity {
         projectId = "TmFPKp8At1v6SCarpxeR";
         projectFirestoreManager = ProjectFirestoreManager.getInstance();
         recordFirestoreManager = RecordFirestoreManager.getInstance();
+        firebaseStorageManager = FirebaseStorageManager.getInstance();
         getFormTemplate();
-        createFormFields();
     }
 
     public void getFormTemplate() {
         projectFirestoreManager.getProjectById(projectId, task -> {
-           if (task.isSuccessful() && task.getResult() != null) {
-               DocumentSnapshot documentSnapshot = task.getResult();
-               Project project = documentSnapshot.toObject(Project.class);
-               projectName = project.getProjectName();
-               formTemplate = project.getFormTemplate();
-               System.out.println(formTemplate.size());
-               createFormFields();
-           } else {
-               Toast.makeText(this, "Error retrieving the form template", Toast.LENGTH_SHORT).show();
-               Log.w(TAG, "Error retrieving the form template", task.getException());
-           }
+            if (task.isSuccessful() && task.getResult() != null) {
+                DocumentSnapshot documentSnapshot = task.getResult();
+                Project project = documentSnapshot.toObject(Project.class);
+                projectName = project.getProjectName();
+                formTemplate = project.getFormTemplate();
+                setupRecordRecycleView();
+            } else {
+                Toast.makeText(this, "Error retrieving the form template", Toast.LENGTH_SHORT).show();
+                Log.w(TAG, "Error retrieving the form template", task.getException());
+            }
         });
     }
 
-    public void createFormFields() {
-        LinearLayout linearLayoutContainer = findViewById(R.id.linearLayoutContainer);
-        LinearLayout.LayoutParams linearLayoutParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT);
-        LinearLayout.LayoutParams textLayoutParams = new LinearLayout.LayoutParams(
-                0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f);
-        LinearLayout.LayoutParams editLayoutParams = new LinearLayout.LayoutParams(
-                0, LinearLayout.LayoutParams.WRAP_CONTENT, 2f);
+    public void setupRecordRecycleView() {
+        recordRecycleView = findViewById(R.id.recordRecyclerView);
+        recordRecycleView.setLayoutManager(new LinearLayoutManager(this));
+        recordFieldAdapter = new RecordFieldAdapter(this, recordFields);
+        recordRecycleView.setAdapter(recordFieldAdapter);
 
         for (TemplateField templateField : formTemplate) {
-            DataType dataType = templateField.getDatatype();
-
-            LinearLayout linearLayout = new LinearLayout(this);
-
-            linearLayout.setLayoutParams(linearLayoutParams);
-            linearLayout.setOrientation(LinearLayout.HORIZONTAL);
-            linearLayout.setWeightSum(3f);
-
-            TextView fieldName = addFieldName(templateField.getFieldName());
-            fieldName.setLayoutParams(textLayoutParams);
-            linearLayout.addView(fieldName);
-
-            switch (dataType) {
-                case TEXT:
-                    EditText editText = addEditText(templateField);
-                    editText.setLayoutParams(editLayoutParams);
-                    linearLayout.addView(editText);
-                    break;
-
-                case NUMBER:
-                    EditText editNumber = addEditNumber(templateField);
-                    editNumber.setLayoutParams(editLayoutParams);
-                    linearLayout.addView(editNumber);
-                    break;
-
-                case IMAGE:
-                    //TODO
-                    break;
-
-                case LOCATION:
-                    //TODO
-                    break;
-
-                case AUDIO:
-                    //TODO
-                    break;
-            }
-
-            linearLayoutContainer.addView(linearLayout);
+            RecordField newRecordField = new RecordField(templateField.getFieldName(), templateField.getDatatype());
+            recordFields.add(newRecordField);
         }
 
+        recordFieldAdapter.notifyDataSetChanged();
+
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+
+        super.onActivityResult(requestCode, resultCode, intent);
+        int position;
+
+        System.out.println(requestCode);
+        System.out.println(CHOOSE_IMAGE_REQUEST & requestCode);
+        if (resultCode == RESULT_OK && intent.getData() != null) {
+            Uri filePath = intent.getData();
+            if ((CHOOSE_IMAGE_REQUEST & requestCode) != 0) {
+                position = requestCode - CHOOSE_IMAGE_REQUEST;
+                ImageRecordViewHolder imageRecordViewHolder =
+                        (ImageRecordViewHolder) recordRecycleView.findViewHolderForAdapterPosition(position);
+                assert imageRecordViewHolder != null;
+                try {
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
+                    imageRecordViewHolder.setImage(bitmap, filePath);
+                } catch (FileNotFoundException e) {
+                    Log.w(NewRecordActivity.TAG, "ERROR: File not found in the provided address", e);
+                } catch (IOException e) {
+                    Log.w(NewRecordActivity.TAG, "ERROR: IO exception while choosing the provided file", e);
+                }
+            }
+        }
+    }
+
+    public void uploadImage(Record record, Uri filePath, int position) {
+        firebaseStorageManager.uploadImage(filePath, task -> {
+            if (task.isSuccessful()) {
+                Uri imageUri = task.getResult();
+                recordFields.get(position).setValue(imageUri.toString());
+                recordFirestoreManager.updateRecord(record);
+            } else {
+                Log.w(NewRecordActivity.TAG, "ERROR: Failed to upload image", task.getException());
+            }
+        });
     }
 
     public void saveRecord(View view) {
         Record newRecord = new Record();
 
-        for (Map.Entry<TemplateField, Integer> fieldId : fieldIds.entrySet()) {
-            String fieldName = fieldId.getKey().getFieldName();
-            DataType dataType = fieldId.getKey().getDatatype();
+        newRecord.setProjectId(projectId);
+        newRecord.setRecordFields(recordFields);
+        String recordId = recordFirestoreManager.createRecord(newRecord);
+        newRecord.setRecordId(recordId);
 
-            switch(dataType) {
-                case TEXT:
-                case NUMBER:
-                    EditText editText = findViewById(fieldId.getValue());
-                    String value = editText.getText().toString().trim();
-                    RecordField recordField = new RecordField(fieldName, value, dataType);
-                    newRecord.addFieldValue(recordField);
-                    break;
-
+        for (int i = 0; i < recordFields.size(); i++) {
+            RecordField recordField = recordFields.get(i);
+            switch (recordField.getDataType()) {
                 case IMAGE:
-                    //TODO
-                    break;
-
-                case LOCATION:
-                    //TODO
-                    break;
-
-                case AUDIO:
-                    //TODO
-                    break;
+                    Uri filePath = ((ImageRecordViewHolder) Objects.requireNonNull(recordRecycleView.findViewHolderForAdapterPosition(i))).getFilePath();
+                    System.out.println(filePath.toString());
+                    if (filePath != null) {
+                        uploadImage(newRecord, filePath, i);
+                    }
             }
         }
-
-        newRecord.setProjectId(projectId);
-        recordFirestoreManager.createRecord(newRecord);
-
-        Intent intent = new Intent(this, ProjectRecordsActivity.class);
-        startActivity(intent);
-    }
-
-    private TextView addFieldName(String fieldName) {
-        TextView textView = new TextView(this);
-        textView.setText(fieldName.toLowerCase());
-        return  textView;
-    }
-
-    private EditText addEditText(TemplateField field) {
-        int id = View.generateViewId();
-        EditText editText = new EditText(this);
-        editText.setHint("Enter text");
-        editText.setInputType(InputType.TYPE_CLASS_TEXT);
-        editText.setId(id);
-        fieldIds.put(field, id);
-        return editText;
-    }
-
-    private EditText addEditNumber(TemplateField field) {
-        int id = View.generateViewId();
-        EditText editNumber = new EditText(this);
-        editNumber.setHint("Enter number");
-        editNumber.setInputType(InputType.TYPE_CLASS_NUMBER);
-        editNumber.setId(id);
-        fieldIds.put(field, id);
-        return editNumber;
+        //Intent intent = new Intent(this, ProjectRecordsActivity.class);
+        //startActivity(intent);
     }
 }

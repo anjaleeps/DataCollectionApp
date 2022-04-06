@@ -4,7 +4,8 @@ import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentId;
 import com.google.firebase.firestore.ServerTimestamp;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Record {
 
@@ -13,7 +14,7 @@ public class Record {
     private String projectId;
     @ServerTimestamp
     private Timestamp timestamp;
-    private HashMap<String, RecordField> recordFields = new HashMap<>();
+    private List<RecordField> recordFields = new ArrayList<>();
 
     public String getProjectId() {
         return projectId;
@@ -39,19 +40,16 @@ public class Record {
         this.timestamp = timestamp;
     }
 
-    public void setRecordFields(HashMap<String, RecordField> recordFields) {
+    public void setRecordFields(List<RecordField> recordFields) {
         this.recordFields = recordFields;
     }
 
-    public HashMap<String, RecordField> getRecordFields() {
+    public List<RecordField> getRecordFields() {
         return recordFields;
     }
 
     public void addFieldValue(RecordField field) {
-        recordFields.put(field.getFieldName(), field);
+        recordFields.add(field);
     }
 
-    public RecordField getFieldValue(String fieldName) {
-        return recordFields.get(fieldName);
-    }
 }

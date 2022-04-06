@@ -5,7 +5,8 @@ public class TemplateField {
     private String fieldName;
     private DataType datatype;
 
-    public TemplateField() {}
+    public TemplateField() {
+    }
 
     public TemplateField(String fieldName, DataType dataType) {
         this.fieldName = fieldName;

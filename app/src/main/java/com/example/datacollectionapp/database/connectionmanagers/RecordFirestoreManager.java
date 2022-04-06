@@ -1,8 +1,12 @@
 package com.example.datacollectionapp.database.connectionmanagers;
 
+import androidx.annotation.NonNull;
+
 import com.example.datacollectionapp.database.contracts.RecordFirestoreContract;
 import com.example.datacollectionapp.models.Record;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -32,6 +36,7 @@ public class RecordFirestoreManager {
                 .document(record.getProjectId())
                 .collection(RecordFirestoreContract.SUB_COLLECTION_NAME)
                 .document();
+
         documentReference.set(record);
         return documentReference.getId();
     }

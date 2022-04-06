@@ -1,12 +1,9 @@
 package com.example.datacollectionapp.screens.formtemplate;
 
 import android.content.Context;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -20,7 +17,7 @@ import com.example.datacollectionapp.models.TemplateField;
 
 import java.util.List;
 
-public class TemplateFieldAdapter extends RecyclerView.Adapter<TemplateFieldAdapter.TemplateFieldViewHolder> {
+public class TemplateFieldAdapter extends RecyclerView.Adapter<TemplateFieldViewHolder> {
 
     Context context;
     List<TemplateField> templateFields;
@@ -34,17 +31,17 @@ public class TemplateFieldAdapter extends RecyclerView.Adapter<TemplateFieldAdap
     @Override
     public TemplateFieldViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.form_field, parent, false);
-        return new TemplateFieldViewHolder(view);
+        return new TemplateFieldViewHolder(this, view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull TemplateFieldAdapter.TemplateFieldViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull TemplateFieldViewHolder holder, int position) {
         TemplateField templateField = templateFields.get(position);
         String fieldName = templateField.getFieldName();
         DataType dataType = templateField.getDatatype();
 
-        EditText editFieldName = holder.fieldName;
-        Spinner spinnerDataType = holder.dataType;
+        EditText editFieldName = holder.getFieldName();
+        Spinner spinnerDataType = holder.getDataType();
 
         if (fieldName != null) {
             editFieldName.setText(fieldName);
@@ -68,45 +65,4 @@ public class TemplateFieldAdapter extends RecyclerView.Adapter<TemplateFieldAdap
         return templateFields.size();
     }
 
-    public class TemplateFieldViewHolder extends RecyclerView.ViewHolder {
-
-        EditText fieldName;
-        Spinner dataType;
-
-        public TemplateFieldViewHolder(@NonNull View itemView) {
-            super(itemView);
-            fieldName = itemView.findViewById(R.id.editFieldName);
-            dataType = itemView.findViewById(R.id.spinnerDataType);
-
-            fieldName.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    TemplateField templateField = templateFields.get(getAdapterPosition());
-                    templateField.setFieldName(fieldName.getText().toString());
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {}
-            });
-
-            dataType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    String selectedDataType = (String) parent.getItemAtPosition(position);
-                    TemplateField templateField = templateFields.get(getAdapterPosition());
-                    templateField.setDatatype(DataType.valueOf(selectedDataType.toUpperCase()));
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
-                    TemplateField templateField = templateFields.get(getAdapterPosition());
-                    templateField.setDatatype(null);
-                }
-            });
-        }
-    }
 }
