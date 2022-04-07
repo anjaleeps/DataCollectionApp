@@ -5,6 +5,8 @@ public class RecordField {
     private DataType dataType;
     private String value;
 
+    public RecordField() {}
+
     public RecordField(String fieldName, DataType dataType) {
         this.fieldName = fieldName;
         this.dataType = dataType;

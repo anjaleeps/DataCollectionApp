@@ -1,4 +1,4 @@
-package com.example.datacollectionapp.screens.record;
+package com.example.datacollectionapp.screens.record.viewholder;
 
 import android.app.Activity;
 import android.content.Context;
@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 
 import com.example.datacollectionapp.R;
 import com.example.datacollectionapp.models.RecordField;
+import com.example.datacollectionapp.screens.record.NewRecordActivity;
 
 import java.util.List;
 

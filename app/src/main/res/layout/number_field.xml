@@ -12,7 +12,9 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:gravity="fill_vertical"
+        android:gravity="center_vertical"
+        android:layout_marginStart="10dp"
+        android:textSize="20sp"
         android:text="TextView" />
 
     <EditText

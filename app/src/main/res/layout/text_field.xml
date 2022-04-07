@@ -11,9 +11,11 @@
         android:id="@+id/textFieldName"
         android:layout_width="0dp"
         android:layout_height="match_parent"
+        android:layout_marginStart="10dp"
         android:layout_weight="1"
-        android:gravity="fill_vertical"
-        android:text="TextView" />
+        android:gravity="center_vertical"
+        android:text="TextView"
+        android:textSize="20sp" />
 
     <EditText
         android:id="@+id/editTextFieldValue"

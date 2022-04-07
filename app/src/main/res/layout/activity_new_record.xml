@@ -8,36 +8,50 @@
 
     <TextView
         android:id="@+id/textView"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
+        android:background="@color/pink_200"
+        android:fontFamily="@font/work_sans"
+        android:gravity="center"
+        android:padding="20dp"
         android:text="Add New Record"
-        android:textSize="24sp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+        android:textSize="26sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recordRecyclerView"
+        android:layout_width="354dp"
+        android:layout_height="411dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginHorizontal="10dp"
+        android:nestedScrollingEnabled="true"
+        android:scrollbars="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.485"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
     <Button
         android:id="@+id/buttonAddNewField"
+        style="@style/ButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:paddingVertical="8dp"
+        android:paddingHorizontal="12dp"
+        android:layout_marginTop="12dp"
+        android:gravity="center_horizontal"
         android:onClick="saveRecord"
         android:text="Add record"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/recordRecyclerView" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recordRecyclerView"
-        android:layout_width="360dp"
-        android:layout_height="510dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        app:layout_constraintTop_toBottomOf="@+id/recordRecyclerView"
+        app:layout_constraintVertical_bias="0.455" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

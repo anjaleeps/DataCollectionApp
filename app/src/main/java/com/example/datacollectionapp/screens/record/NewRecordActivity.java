@@ -1,7 +1,6 @@
 package com.example.datacollectionapp.screens.record;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.loader.content.CursorLoader;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -20,10 +19,16 @@ import com.example.datacollectionapp.R;
 import com.example.datacollectionapp.database.connectionmanagers.FirebaseStorageManager;
 import com.example.datacollectionapp.database.connectionmanagers.ProjectFirestoreManager;
 import com.example.datacollectionapp.database.connectionmanagers.RecordFirestoreManager;
+import com.example.datacollectionapp.database.contracts.ProjectFirestoreContract;
 import com.example.datacollectionapp.models.Project;
 import com.example.datacollectionapp.models.Record;
 import com.example.datacollectionapp.models.RecordField;
 import com.example.datacollectionapp.models.TemplateField;
+import com.example.datacollectionapp.screens.record.viewholder.AudioRecordViewHolder;
+import com.example.datacollectionapp.screens.record.viewholder.ImageRecordViewHolder;
+import com.google.android.gms.common.api.GoogleApi;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.internal.GoogleApiAvailabilityCache;
 import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.io.FileNotFoundException;
@@ -56,6 +61,8 @@ public class NewRecordActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_record);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
 
 //        Intent intent = getIntent();
 //        projectId = intent.getStringExtra(PROJECT_ID);
@@ -63,6 +70,14 @@ public class NewRecordActivity extends AppCompatActivity {
         projectFirestoreManager = ProjectFirestoreManager.getInstance();
         recordFirestoreManager = RecordFirestoreManager.getInstance();
         firebaseStorageManager = FirebaseStorageManager.getInstance();
+
+        recordFirestoreManager.getRecordsByProject(projectId, task-> {
+            if (task.isSuccessful()) {
+                List<Record> records = task.getResult().toObjects(Record.class);
+                System.out.println(records.size());
+            }
+        });
+
         getFormTemplate();
     }
 
@@ -190,5 +205,9 @@ public class NewRecordActivity extends AppCompatActivity {
         cursor.close();
         System.out.println(fileName);
         return fileName;
+    }
+
+    private void setMap() {
+
     }
 }

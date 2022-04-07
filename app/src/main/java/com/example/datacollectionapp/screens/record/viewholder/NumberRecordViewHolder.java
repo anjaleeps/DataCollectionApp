@@ -1,4 +1,4 @@
-package com.example.datacollectionapp.screens.record;
+package com.example.datacollectionapp.screens.record.viewholder;
 
 import android.content.Context;
 import android.text.Editable;
