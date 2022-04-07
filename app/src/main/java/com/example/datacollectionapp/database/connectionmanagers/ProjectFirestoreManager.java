@@ -40,7 +40,7 @@ public class ProjectFirestoreManager {
                 .addOnCompleteListener(onCompleteListener);
     }
 
-    public void getAllProjectsByUser(OnCompleteListener<QuerySnapshot> onCompleteListener, String username) {
+    public void getAllProjectsByUser(String username, OnCompleteListener<QuerySnapshot> onCompleteListener) {
         collectionReference.whereEqualTo(ProjectFirestoreContract.USERNAME, username)
                 .orderBy(ProjectFirestoreContract.PROJECT_NAME)
                 .get()
