@@ -9,6 +9,7 @@
 
     <ListView
         android:id="@+id/projectList"
+        style="@android:style/Widget.ListView.Menu"
         android:layout_width="320dp"
         android:layout_height="546dp"
         android:layout_marginTop="56dp"

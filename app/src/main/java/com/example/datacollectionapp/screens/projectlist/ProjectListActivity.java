@@ -25,13 +25,14 @@ import java.util.ArrayList;
 public class ProjectListActivity extends AppCompatActivity {
 
     private ProjectFirestoreManager projectFirestoreManager;
-    private String TAG = "Project List";
+    private String TAG = "Record List";
     private ListView projectsListView;
     private ArrayAdapter projectNamesAdapter;
     ArrayList projectNames;
     ArrayList projects;
-    String selectedProject;
-    public static final String EXTRA_MESSAGE = "com.example.datacollectionapp.MESSAGE";
+    String selectedProjectId, selectedProjectName;
+    public static final String Project_Id = "com.example.datacollectionapp.Project_Id";
+    public static final String Project_Name = "com.example.datacollectionapp.Project_Name ";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,16 +71,18 @@ public class ProjectListActivity extends AppCompatActivity {
         projectsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                selectedProject = (String) projects.get(i);
-                Log.i(TAG,selectedProject);
-                goToProjetRecords(selectedProject);
+                selectedProjectId = (String) projects.get(i);
+                selectedProjectName = (String) projectNames.get(i);
+                Log.i(TAG,selectedProjectId);
+                goToProjectRecords(selectedProjectId,selectedProjectName);
             }
         });
     }
 
-    private void goToProjetRecords(String projectId){
+    private void goToProjectRecords(String projectId, String projectName){
         Intent intent = new Intent(this, ProjectRecordsActivity.class);
-        intent.putExtra(EXTRA_MESSAGE, projectId);
+        intent.putExtra(Project_Id, projectId);
+        intent.putExtra(Project_Name, projectName);
         startActivity(intent);
     }
 
