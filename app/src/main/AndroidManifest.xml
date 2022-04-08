@@ -4,7 +4,7 @@
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission. ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -17,6 +17,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.DataCollectionApp">
+        <activity
+            android:name=".screens.record.ViewRecordActivity"
+            android:exported="false" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.example.datacollectionapp.provider"
@@ -26,23 +30,27 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+
         <activity android:name=".screens.record.NewRecordActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-
             </intent-filter>
         </activity>
-        <activity android:name=".screens.formtemplate.NewFormTemplateActivity"
-            android:parentActivityName=".screens.project.NewProjectActivity"
-            android:exported="true"/>
-        <activity android:name=".screens.projectrecords.ProjectRecordsActivity"
-            android:exported="true"/>
-        <activity android:name=".screens.project.NewProjectActivity"
-            android:exported="true"/>
-        <activity android:name=".screens.projectlist.ProjectListActivity"
-            android:exported="true"/>
+        <activity
+            android:name=".screens.formtemplate.NewFormTemplateActivity"
+            android:exported="true"
+            android:parentActivityName=".screens.project.NewProjectActivity" />
+        <activity
+            android:name=".screens.projectrecords.ProjectRecordsActivity"
+            android:exported="true" />
+        <activity
+            android:name=".screens.project.NewProjectActivity"
+            android:exported="true" />
+        <activity
+            android:name=".screens.projectlist.ProjectListActivity"
+            android:exported="true" />
 
         <meta-data
             android:name="preloaded_fonts"
