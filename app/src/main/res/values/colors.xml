@@ -10,4 +10,5 @@
     <color name="pink_200">#E91E63</color>
     <color name="grey_500">#515050</color>
     <color name="grey_100">#EAE5E5</color>
+    <color name="grey_50">#FFF6F5F5</color>
 </resources>

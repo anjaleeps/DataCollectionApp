@@ -54,6 +54,8 @@ public class ProjectFirestoreManager {
     }
 
     public void deleteProject(String projectId) {
+        RecordFirestoreManager recordFirestoreManager = RecordFirestoreManager.getInstance();
+        recordFirestoreManager.deleteAllRecordsByProjectId(projectId);
         DocumentReference documentReference = collectionReference.document(projectId);
         documentReference.delete();
     }

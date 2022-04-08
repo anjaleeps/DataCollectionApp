@@ -13,6 +13,8 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.List;
+
 public class RecordFirestoreManager {
 
     private static RecordFirestoreManager recordFirestoreManager;
@@ -75,5 +77,16 @@ public class RecordFirestoreManager {
                 .collection(RecordFirestoreContract.SUB_COLLECTION_NAME)
                 .document(recordId)
                 .delete();
+    }
+
+    public void deleteAllRecordsByProjectId(String projectId) {
+        getRecordsByProject(projectId, task -> {
+            if (task.isSuccessful()) {
+                List<Record> records = task.getResult().toObjects(Record.class);
+                for (Record record : records) {
+                    deleteRecord(projectId, record.getRecordId());
+                }
+            }
+        });
     }
 }

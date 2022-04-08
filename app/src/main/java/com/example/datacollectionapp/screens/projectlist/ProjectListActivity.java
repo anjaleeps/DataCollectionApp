@@ -1,6 +1,7 @@
 package com.example.datacollectionapp.screens.projectlist;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -13,6 +14,8 @@ import android.widget.ListView;
 
 import com.example.datacollectionapp.R;
 import com.example.datacollectionapp.database.connectionmanagers.ProjectFirestoreManager;
+import com.example.datacollectionapp.database.connectionmanagers.RecordFirestoreManager;
+import com.example.datacollectionapp.screens.project.NewProjectActivity;
 import com.example.datacollectionapp.screens.projectrecords.ProjectRecordsActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -28,8 +31,9 @@ public class ProjectListActivity extends AppCompatActivity {
     private String TAG = "Project List";
     private ListView projectsListView;
     private ArrayAdapter projectNamesAdapter;
-    ArrayList projectNames;
-    ArrayList projects;
+    private ProjectListAdapter projectListAdapter;
+    ArrayList<String> projectNames;
+    ArrayList<String> projects;
     String selectedProject;
     public static final String EXTRA_MESSAGE = "com.example.datacollectionapp.MESSAGE";
 
@@ -37,6 +41,8 @@ public class ProjectListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_project_list);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
         projectFirestoreManager = ProjectFirestoreManager.getInstance();
         getProjectList();
     }
@@ -65,22 +71,30 @@ public class ProjectListActivity extends AppCompatActivity {
 
     private void listView(){
         projectsListView = (ListView) findViewById(R.id.projectList);
-        projectNamesAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, projectNames);
-        projectsListView.setAdapter(projectNamesAdapter);
-        projectsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                selectedProject = (String) projects.get(i);
-                Log.i(TAG,selectedProject);
-                goToProjetRecords(selectedProject);
-            }
-        });
+        projectListAdapter = new ProjectListAdapter(this, projectNames, projects);
+        projectsListView.setAdapter(projectListAdapter);
     }
 
-    private void goToProjetRecords(String projectId){
-        Intent intent = new Intent(this, ProjectRecordsActivity.class);
-        intent.putExtra(EXTRA_MESSAGE, projectId);
+    public void createNewProject(View view) {
+        Intent intent = new Intent(this, NewProjectActivity.class);
         startActivity(intent);
     }
 
+    public void deleteProject(String projectId, int position) {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setTitle("Delete " + projectNames.get(position));
+        alertDialog.setMessage("Are you sure you want to delete " + projectNames.get(position) + "?");
+
+        alertDialog.setPositiveButton("Delete", (dialog, which) -> {
+            projectFirestoreManager.deleteProject(projectId);
+            dialog.dismiss();
+            recreate();
+        });
+
+        alertDialog.setNegativeButton("Cancel", (dialog, which) -> {
+           dialog.cancel();
+        });
+
+        alertDialog.show();
+    }
 }
