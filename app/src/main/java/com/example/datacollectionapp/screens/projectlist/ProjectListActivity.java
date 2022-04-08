@@ -15,7 +15,6 @@ import android.widget.ListView;
 import com.example.datacollectionapp.R;
 import com.example.datacollectionapp.database.connectionmanagers.FirebaseAuthentication;
 import com.example.datacollectionapp.database.connectionmanagers.ProjectFirestoreManager;
-import com.example.datacollectionapp.database.connectionmanagers.RecordFirestoreManager;
 import com.example.datacollectionapp.screens.project.NewProjectActivity;
 import com.example.datacollectionapp.screens.projectrecords.ProjectRecordsActivity;
 import com.example.datacollectionapp.screens.user.RegisterActivity;
@@ -33,13 +32,10 @@ public class ProjectListActivity extends AppCompatActivity {
     private FirebaseAuthentication firebaseAuthentication;
     private String TAG = "Project List";
     private ListView projectsListView;
-    private ArrayAdapter projectNamesAdapter;
     private ProjectListAdapter projectListAdapter;
     ArrayList<String> projectNames;
     ArrayList<String> projects;
     public static final String EXTRA_MESSAGE = "com.example.datacollectionapp.MESSAGE";
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
