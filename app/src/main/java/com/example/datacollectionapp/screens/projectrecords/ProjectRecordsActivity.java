@@ -84,14 +84,16 @@ public class ProjectRecordsActivity extends AppCompatActivity {
         @Override
         public void onComplete(@NonNull Task<QuerySnapshot> task) {
             if (task.isSuccessful()) {
-                DocumentSnapshot firstDocument = task.getResult().getDocuments().get(0);
-                ArrayList forHeaders = (ArrayList) firstDocument.getData().get("recordFields");
-                for(Object i : forHeaders ){
-                    HashMap recordList = (HashMap) i;
-                    headers = headers + "," +(String) recordList.get("fieldName");
+                if (!task.getResult().getDocuments().isEmpty()){
+                    DocumentSnapshot firstDocument = task.getResult().getDocuments().get(0);
+                    ArrayList forHeaders = (ArrayList) firstDocument.getData().get("recordFields");
+                    for(Object i : forHeaders ){
+                        HashMap recordList = (HashMap) i;
+                        headers = headers + "," +(String) recordList.get("fieldName");
+                    }
+                    String[] csvHeaders = headers.split(",");
+                    data.add(csvHeaders);
                 }
-                String[] csvHeaders = headers.split(",");
-                data.add(csvHeaders);
                 for (QueryDocumentSnapshot document : task.getResult()) {
                     String dataRow = "";
                     //Log.d(TAG, document.getId() + " => " + document.getData());
