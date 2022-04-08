@@ -10,10 +10,12 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.example.datacollectionapp.R;
+import com.example.datacollectionapp.database.connectionmanagers.FirebaseAuthentication;
 import com.example.datacollectionapp.database.connectionmanagers.ProjectFirestoreManager;
 import com.example.datacollectionapp.models.Project;
 import com.example.datacollectionapp.models.TemplateField;
 import com.example.datacollectionapp.screens.projectlist.ProjectListActivity;
+import com.example.datacollectionapp.screens.user.RegisterActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +26,7 @@ public class NewFormTemplateActivity extends AppCompatActivity {
 
     private Project project;
     private ProjectFirestoreManager projectFirestoreManager;
+    private FirebaseAuthentication firebaseAuthentication;
     private TemplateFieldAdapter fieldAdapter;
     private final List<TemplateField> templateFields = new ArrayList<>();
 
@@ -39,7 +42,16 @@ public class NewFormTemplateActivity extends AppCompatActivity {
         setProjectName();
         templateFields.addAll(project.getFormTemplate());
         projectFirestoreManager = ProjectFirestoreManager.getInstance();
+        firebaseAuthentication = FirebaseAuthentication.getInstance();
         setupFieldRecycleView();
+    }
+
+    public void onStart() {
+        super.onStart();
+        if (!firebaseAuthentication.isUserSet()) {
+            Intent intent = new Intent(this, RegisterActivity.class);
+            startActivity(intent);
+        }
     }
 
     public void setProjectName() {

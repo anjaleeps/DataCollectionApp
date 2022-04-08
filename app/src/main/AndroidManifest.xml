@@ -13,8 +13,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.DataCollectionApp">
-        <activity android:name=".screens.project.EditProjectActivity"
-            android:parentActivityName=".screens.projectlist.ProjectListActivity"/>
+        <activity android:name=".screens.user.LoginActivity"></activity>
+        <activity android:name=".screens.user.RegisterActivity" />
+        <activity
+            android:name=".screens.project.EditProjectActivity"
+            android:parentActivityName=".screens.projectlist.ProjectListActivity" />
         <activity
             android:name=".screens.projectlist.ProjectListActivity"
             android:exported="true">
@@ -26,7 +29,8 @@
         </activity>
         <activity
             android:name=".screens.record.NewRecordActivity"
-            android:parentActivityName=".screens.projectlist.ProjectListActivity"></activity>
+            android:parentActivityName=".screens.projectlist.ProjectListActivity">
+        </activity>
         <activity
             android:name=".screens.formtemplate.NewFormTemplateActivity"
             android:exported="true"

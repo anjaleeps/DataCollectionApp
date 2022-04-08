@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.example.datacollectionapp.R;
+import com.example.datacollectionapp.database.connectionmanagers.FirebaseAuthentication;
 import com.example.datacollectionapp.database.connectionmanagers.FirebaseStorageManager;
 import com.example.datacollectionapp.database.connectionmanagers.ProjectFirestoreManager;
 import com.example.datacollectionapp.database.connectionmanagers.RecordFirestoreManager;
@@ -26,6 +27,8 @@ import com.example.datacollectionapp.models.RecordField;
 import com.example.datacollectionapp.models.TemplateField;
 import com.example.datacollectionapp.screens.record.viewholder.AudioRecordViewHolder;
 import com.example.datacollectionapp.screens.record.viewholder.ImageRecordViewHolder;
+import com.example.datacollectionapp.screens.record.viewholder.LocationRecordViewHolder;
+import com.example.datacollectionapp.screens.user.RegisterActivity;
 import com.google.android.gms.common.api.GoogleApi;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.internal.GoogleApiAvailabilityCache;
@@ -47,7 +50,6 @@ public class NewRecordActivity extends AppCompatActivity {
     public static final String TAG = "NewRecordActivity";
 
     private String projectId;
-    private String projectName;
     private RecyclerView recordRecycleView;
     private RecordFieldAdapter recordFieldAdapter;
     private List<TemplateField> formTemplate = new ArrayList<>();
@@ -56,6 +58,7 @@ public class NewRecordActivity extends AppCompatActivity {
     private ProjectFirestoreManager projectFirestoreManager;
     private RecordFirestoreManager recordFirestoreManager;
     private FirebaseStorageManager firebaseStorageManager;
+    private FirebaseAuthentication firebaseAuthentication;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,11 +69,20 @@ public class NewRecordActivity extends AppCompatActivity {
 
 //        Intent intent = getIntent();
 //        projectId = intent.getStringExtra(PROJECT_ID);
-        projectId = "TmFPKp8At1v6SCarpxeR";
+        projectId = "BlQEPLJfcHY9Fxd8A1XR";
         projectFirestoreManager = ProjectFirestoreManager.getInstance();
         recordFirestoreManager = RecordFirestoreManager.getInstance();
         firebaseStorageManager = FirebaseStorageManager.getInstance();
+        firebaseAuthentication = FirebaseAuthentication.getInstance();
         getFormTemplate();
+    }
+
+    public void onStart() {
+        super.onStart();
+        if (!firebaseAuthentication.isUserSet()) {
+            Intent intent = new Intent(this, RegisterActivity.class);
+            startActivity(intent);
+        }
     }
 
     private void getFormTemplate() {
@@ -78,7 +90,6 @@ public class NewRecordActivity extends AppCompatActivity {
             if (task.isSuccessful() && task.getResult() != null) {
                 DocumentSnapshot documentSnapshot = task.getResult();
                 Project project = documentSnapshot.toObject(Project.class);
-                projectName = project.getProjectName();
                 formTemplate = project.getFormTemplate();
                 setupRecordRecycleView();
             } else {
@@ -159,6 +170,8 @@ public class NewRecordActivity extends AppCompatActivity {
                     if (filePath != null) {
                         uploadAudio(newRecord, filePath, i);
                     }
+                case LOCATION:
+                    ((LocationRecordViewHolder) Objects.requireNonNull(recordRecycleView.findViewHolderForAdapterPosition(i))).stopLocationUpdates();
             }
         }
         //Intent intent = new Intent(this, ProjectRecordsActivity.class);

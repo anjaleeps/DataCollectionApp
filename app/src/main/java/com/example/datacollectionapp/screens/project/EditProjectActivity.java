@@ -10,15 +10,18 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.datacollectionapp.R;
+import com.example.datacollectionapp.database.connectionmanagers.FirebaseAuthentication;
 import com.example.datacollectionapp.database.connectionmanagers.ProjectFirestoreManager;
 import com.example.datacollectionapp.models.Project;
 import com.example.datacollectionapp.screens.projectlist.ProjectListActivity;
 import com.example.datacollectionapp.screens.projectlist.ProjectListAdapter;
+import com.example.datacollectionapp.screens.user.RegisterActivity;
 
 public class EditProjectActivity extends AppCompatActivity {
 
     public static final String TAG = "EditProjectActivity";
     private ProjectFirestoreManager projectFirestoreManager;
+    private FirebaseAuthentication firebaseAuthentication;
     private String projectId;
     private Project project;
 
@@ -29,10 +32,19 @@ public class EditProjectActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         projectFirestoreManager = ProjectFirestoreManager.getInstance();
+        firebaseAuthentication = FirebaseAuthentication.getInstance();
 
         Intent intent = getIntent();
         projectId = intent.getStringExtra(ProjectListActivity.EXTRA_MESSAGE);
         fillProjectDetails();
+    }
+
+    public void onStart() {
+        super.onStart();
+        if (!firebaseAuthentication.isUserSet()) {
+            Intent intent = new Intent(this, RegisterActivity.class);
+            startActivity(intent);
+        }
     }
 
     private void fillProjectDetails() {

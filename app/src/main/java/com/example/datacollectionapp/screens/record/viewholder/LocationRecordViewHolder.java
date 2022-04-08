@@ -57,6 +57,10 @@ public class LocationRecordViewHolder extends RecordViewHolder {
         }
     }
 
+    public void stopLocationUpdates() {
+        gpsTracker.stopLocationUpdate();
+    }
+
     public EditText getLatitude() {
         return latitude;
     }
