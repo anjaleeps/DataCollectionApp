@@ -25,7 +25,6 @@
             android:parentActivityName=".screens.project.NewProjectActivity"/>
         <activity android:name=".screens.projectrecords.ProjectRecordsActivity" />
         <activity android:name=".screens.project.NewProjectActivity">
-
         </activity>
         <activity android:name=".screens.projectlist.ProjectListActivity" />
 

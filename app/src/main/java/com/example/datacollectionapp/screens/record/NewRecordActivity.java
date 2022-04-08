@@ -70,14 +70,6 @@ public class NewRecordActivity extends AppCompatActivity {
         projectFirestoreManager = ProjectFirestoreManager.getInstance();
         recordFirestoreManager = RecordFirestoreManager.getInstance();
         firebaseStorageManager = FirebaseStorageManager.getInstance();
-
-        recordFirestoreManager.getRecordsByProject(projectId, task-> {
-            if (task.isSuccessful()) {
-                List<Record> records = task.getResult().toObjects(Record.class);
-                System.out.println(records.size());
-            }
-        });
-
         getFormTemplate();
     }
 

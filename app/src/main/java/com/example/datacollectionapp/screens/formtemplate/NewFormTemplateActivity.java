@@ -31,6 +31,7 @@ public class NewFormTemplateActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_form_template);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         Intent intent = getIntent();
         project = (Project) intent.getSerializableExtra(PROJECT_DATA);
