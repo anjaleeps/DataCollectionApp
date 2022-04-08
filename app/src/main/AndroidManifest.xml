@@ -13,7 +13,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.DataCollectionApp">
-        <activity android:name=".screens.record.NewRecordActivity">
+        <activity android:name=".screens.projectlist.ProjectListActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -21,16 +22,22 @@
 
             </intent-filter>
         </activity>
-        <activity android:name=".screens.formtemplate.NewFormTemplateActivity"
-            android:parentActivityName=".screens.project.NewProjectActivity"/>
-        <activity android:name=".screens.projectrecords.ProjectRecordsActivity" />
-        <activity android:name=".screens.project.NewProjectActivity">
+        <activity android:name=".screens.record.NewRecordActivity"
+            android:parentActivityName=".screens.projectlist.ProjectListActivity">
         </activity>
-        <activity android:name=".screens.projectlist.ProjectListActivity" />
+        <activity android:name=".screens.formtemplate.NewFormTemplateActivity"
+            android:parentActivityName=".screens.project.NewProjectActivity"
+            android:exported="true"/>
+        <activity android:name=".screens.project.NewProjectActivity"
+            android:exported="true"/>
+        <activity android:name=".screens.projectrecords.ProjectRecordsActivity"
+            android:parentActivityName=".screens.projectlist.ProjectListActivity"
+            android:exported="true" />
 
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
+
     </application>
 
 </manifest>
