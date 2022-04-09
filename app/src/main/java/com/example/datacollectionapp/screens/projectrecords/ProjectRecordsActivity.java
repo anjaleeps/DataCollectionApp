@@ -7,6 +7,7 @@ import androidx.core.content.FileProvider;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -15,10 +16,15 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.datacollectionapp.R;
+import com.example.datacollectionapp.database.connectionmanagers.FirebaseAuthentication;
+import com.example.datacollectionapp.database.connectionmanagers.ProjectFirestoreManager;
 import com.example.datacollectionapp.database.connectionmanagers.RecordFirestoreManager;
+import com.example.datacollectionapp.models.Project;
 import com.example.datacollectionapp.models.Record;
 import com.example.datacollectionapp.models.RecordField;
+import com.example.datacollectionapp.screens.formtemplate.NewFormTemplateActivity;
 import com.example.datacollectionapp.screens.record.NewRecordActivity;
+import com.example.datacollectionapp.screens.user.RegisterActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -34,6 +40,8 @@ import java.util.List;
 public class ProjectRecordsActivity extends AppCompatActivity {
 
     private RecordFirestoreManager recordFireStoreManager;
+    private FirebaseAuthentication firebaseAuthentication;
+    private ProjectFirestoreManager projectFirestoreManager;
     private String projectId, projectName;
     private String TAG = "Record List";
     private List<Record> recordList = new ArrayList<>();
@@ -65,7 +73,40 @@ public class ProjectRecordsActivity extends AppCompatActivity {
         projectId = "BlQEPLJfcHY9Fxd8A1XR";
         projectName = "Human Survey";
         recordFireStoreManager = RecordFirestoreManager.getInstance();
-        recordFireStoreManager.getRecordsByProject(projectId,onCompleteListener);
+        projectFirestoreManager = ProjectFirestoreManager.getInstance();
+        firebaseAuthentication = FirebaseAuthentication.getInstance();
+
+        checkFormTemplate();
+    }
+
+    public void onStart() {
+        super.onStart();
+        if (!firebaseAuthentication.isUserSet()) {
+            Intent intent = new Intent(this, RegisterActivity.class);
+            startActivity(intent);
+        }
+    }
+
+    public void checkFormTemplate() {
+        projectFirestoreManager.getProjectById(projectId, task -> {
+            if (task.isSuccessful()) {
+                if (task.getResult() != null) {
+                    Project project = task.getResult().toObject(Project.class);
+                    if (project.getFormTemplate() != null && project.getFormTemplate().size() > 0) {
+                        recordFireStoreManager.getRecordsByProject(projectId,onCompleteListener);
+                    } else {
+                        Intent intent = new Intent(this, NewFormTemplateActivity.class);
+                        intent.putExtra(NewFormTemplateActivity.PROJECT_DATA, project);
+                        startActivity(intent);
+                    }
+                } else {
+                    Log.e(TAG, "No project with the given ID " + projectId);
+                }
+
+            } else {
+                Log.e(TAG, "Couldn't retrieve project details", task.getException());
+            }
+        });
     }
 
     public void share(View view){
