@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.datacollectionapp.R;
+import com.example.datacollectionapp.database.connectionmanagers.FirebaseAuthentication;
 import com.example.datacollectionapp.database.connectionmanagers.ProjectFirestoreManager;
 import com.example.datacollectionapp.database.connectionmanagers.RecordFirestoreManager;
 import com.example.datacollectionapp.models.Project;
@@ -18,6 +19,7 @@ import com.example.datacollectionapp.models.Record;
 import com.example.datacollectionapp.models.RecordField;
 import com.example.datacollectionapp.models.TemplateField;
 import com.example.datacollectionapp.screens.projectrecords.ProjectRecordsActivity;
+import com.example.datacollectionapp.screens.user.RegisterActivity;
 import com.google.firebase.firestore.DocumentSnapshot;
 
 import org.w3c.dom.Text;
@@ -36,6 +38,7 @@ public class ViewRecordActivity extends AppCompatActivity {
     private SimpleDateFormat dateFormat;
     private ProjectFirestoreManager projectFirestoreManager;
     private RecordFirestoreManager recordFirestoreManager;
+    private FirebaseAuthentication firebaseAuthentication;
     private RecyclerView recordRecycleView;
     private RecordFieldAdapter recordFieldAdapter;
 
@@ -47,12 +50,21 @@ public class ViewRecordActivity extends AppCompatActivity {
 
         projectFirestoreManager = ProjectFirestoreManager.getInstance();
         recordFirestoreManager = RecordFirestoreManager.getInstance();
+        firebaseAuthentication = FirebaseAuthentication.getInstance();
         dateFormat = new SimpleDateFormat(timestampPattern);
 
         Intent intent = getIntent();
         recordId = intent.getStringExtra(ProjectRecordsActivity.RECORD_ID);
         projectId = intent.getStringExtra(ProjectRecordsActivity.PROJECT_ID);
         showRecord();
+    }
+
+    public void onStart() {
+        super.onStart();
+        if (!firebaseAuthentication.isUserSet()) {
+            Intent intent = new Intent(this, RegisterActivity.class);
+            startActivity(intent);
+        }
     }
 
     private void showRecord() {

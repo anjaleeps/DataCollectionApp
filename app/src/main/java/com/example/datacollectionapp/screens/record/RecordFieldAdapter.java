@@ -86,6 +86,8 @@ public class RecordFieldAdapter extends RecyclerView.Adapter<RecordViewHolder> {
                 break;
             case VIEW_RECORD:
                 bindViewRecordViews(recordField, holder);
+            case UPDATE_RECORD:
+                bindUpdateRecordViews(recordField, holder);
         }
 
 
@@ -146,6 +148,35 @@ public class RecordFieldAdapter extends RecyclerView.Adapter<RecordViewHolder> {
                 break;
             case AUDIO_VIEW_TYPE:
                 ((AudioRecordViewHolder) holder).hideChooseButton();
+                ((AudioRecordViewHolder) holder).showAudio(recordField.getValue());
+                break;
+            default:
+        }
+    }
+
+    public void bindUpdateRecordViews(RecordField recordField, RecordViewHolder holder) {
+        switch (holder.getItemViewType()) {
+            case TEXT_VIEW_TYPE:
+                EditText editTextValue = ((TextRecordViewHolder) holder).getTextValue();
+                editTextValue.setText(recordField.getValue());
+                break;
+            case NUMBER_VIEW_TYPE:
+                EditText editNumberValue = ((NumberRecordViewHolder) holder).getNumberValue();
+                editNumberValue.setText(recordField.getValue());
+                break;
+            case LOCATION_VIEW_TYPE:
+                if (recordField.getValue() != null) {
+                    EditText editLatitude = ((LocationRecordViewHolder) holder).getLatitude();
+                    EditText editLongitude = ((LocationRecordViewHolder) holder).getLongitude();
+                    String[] coordinates = recordField.getValue().split(",");
+                    editLatitude.setText(coordinates[0]);
+                    editLongitude.setText(coordinates[1]);
+                }
+                break;
+            case IMAGE_VIEW_TYPE:
+                ((ImageRecordViewHolder) holder).downloadAndShowImage(recordField.getValue());
+                break;
+            case AUDIO_VIEW_TYPE:
                 ((AudioRecordViewHolder) holder).showAudio(recordField.getValue());
                 break;
             default:

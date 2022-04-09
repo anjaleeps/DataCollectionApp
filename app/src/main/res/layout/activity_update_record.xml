@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".screens.record.NewRecordActivity">
+    tools:context=".screens.record.UpdateRecordActivity">
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -42,17 +42,37 @@
 
     </LinearLayout>
 
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recordRecyclerView"
-        android:layout_width="342dp"
-        android:layout_height="499dp"
-        android:layout_marginHorizontal="10dp"
+        android:layout_width="354dp"
+        android:layout_height="411dp"
         android:layout_marginTop="8dp"
+        android:layout_marginHorizontal="10dp"
         android:nestedScrollingEnabled="true"
         android:scrollbars="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.485"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+
+    <Button
+        android:id="@+id/buttonAddNewRecord"
+        style="@style/ButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:gravity="center_horizontal"
+        android:onClick="updateRecord"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="8dp"
+        android:text="Save"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/recordRecyclerView"
+        app:layout_constraintVertical_bias="0.455" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

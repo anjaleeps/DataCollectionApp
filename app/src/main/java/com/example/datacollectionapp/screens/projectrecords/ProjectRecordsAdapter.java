@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.example.datacollectionapp.R;
 import com.example.datacollectionapp.models.Record;
+import com.example.datacollectionapp.screens.record.UpdateRecordActivity;
 import com.example.datacollectionapp.screens.record.ViewRecordActivity;
 
 import java.text.SimpleDateFormat;
@@ -76,6 +77,11 @@ public class ProjectRecordsAdapter extends BaseAdapter {
     }
 
     private void editRecord(View view, int position) {
+        Record record = recordList.get(position);
+        Intent intent = new Intent(context, UpdateRecordActivity.class);
+        intent.putExtra(ProjectRecordsActivity.RECORD_ID, record.getRecordId());
+        intent.putExtra(ProjectRecordsActivity.PROJECT_ID, record.getProjectId());
+        context.startActivity(intent);
     }
 
     public void selectRecord(View view, int position) {

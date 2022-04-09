@@ -5,7 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -20,6 +22,7 @@ import java.util.List;
 public class AudioRecordViewHolder extends RecordViewHolder {
 
     private final FirebaseStorageManager firebaseStorageManager;
+    private LinearLayout linearLayout;
     private TextView audioName;
     private Button chooseButton;
     private Uri filePath;
@@ -28,6 +31,7 @@ public class AudioRecordViewHolder extends RecordViewHolder {
         super(itemView, itemView.findViewById(R.id.textFieldName), context, recordFields);
         chooseButton = itemView.findViewById(R.id.buttonChooseAudio);
         audioName = itemView.findViewById(R.id.textView);
+        linearLayout = itemView.findViewById(R.id.linearLayout1);
         chooseButton.setOnClickListener(this::chooseAudio);
         firebaseStorageManager = FirebaseStorageManager.getInstance();
     }
@@ -53,6 +57,8 @@ public class AudioRecordViewHolder extends RecordViewHolder {
 
     public void hideChooseButton() {
         chooseButton.setVisibility(View.GONE);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 3f);
+        linearLayout.setLayoutParams(layoutParams);
     }
 
     public Button getChooseButton() {
