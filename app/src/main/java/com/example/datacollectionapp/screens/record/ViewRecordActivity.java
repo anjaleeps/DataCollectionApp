@@ -15,7 +15,6 @@ import com.example.datacollectionapp.database.connectionmanagers.RecordFirestore
 import com.example.datacollectionapp.models.Project;
 import com.example.datacollectionapp.models.RecordField;
 import com.example.datacollectionapp.models.TemplateField;
-import com.example.datacollectionapp.screens.projectlist.ProjectListActivity;
 import com.example.datacollectionapp.screens.projectrecords.ProjectRecordsActivity;
 import com.google.firebase.firestore.DocumentSnapshot;
 
@@ -37,8 +36,8 @@ public class ViewRecordActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_record);
         Intent intent = getIntent();
-        projectId = intent.getStringExtra(ProjectRecordsActivity.Project_Id);
-        recordId = intent.getStringExtra(ProjectRecordsActivity.Record_Id);
+        projectId = intent.getStringExtra(ProjectRecordsActivity.PROJECT_ID);
+        recordId = intent.getStringExtra(ProjectRecordsActivity.RECORD_ID);
         projectFirestoreManager = ProjectFirestoreManager.getInstance();
         recordFirestoreManager = RecordFirestoreManager.getInstance();
         getFormTemplate();

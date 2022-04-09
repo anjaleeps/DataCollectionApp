@@ -9,7 +9,7 @@
     android:weightSum="6">
 
     <TextView
-        android:id="@+id/textViewProjectName"
+        android:id="@+id/textViewName"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:paddingStart="50dp"

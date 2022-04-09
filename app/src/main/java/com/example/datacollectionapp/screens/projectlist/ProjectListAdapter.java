@@ -2,8 +2,6 @@ package com.example.datacollectionapp.screens.projectlist;
 
 import android.content.Context;
 import android.content.Intent;
-import android.text.Layout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,7 +46,7 @@ public class ProjectListAdapter extends BaseAdapter {
         if (convertView == null) {
             view = LayoutInflater.from(context).inflate(R.layout.list_item, parent, false);
         }
-        TextView projectName = view.findViewById(R.id.textViewProjectName);
+        TextView projectName = view.findViewById(R.id.textViewName);
         ImageView buttonEdit = view.findViewById(R.id.buttonEdit);
         ImageView buttonDelete = view.findViewById(R.id.buttonDelete);
 

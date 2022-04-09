@@ -1,6 +1,7 @@
 package com.example.datacollectionapp.screens.projectrecords;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
@@ -9,17 +10,17 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.example.datacollectionapp.R;
 import com.example.datacollectionapp.database.connectionmanagers.RecordFirestoreManager;
-import com.example.datacollectionapp.screens.projectlist.ProjectListActivity;
-import com.example.datacollectionapp.screens.record.ViewRecordActivity;
+import com.example.datacollectionapp.models.Record;
+import com.example.datacollectionapp.models.RecordField;
+import com.example.datacollectionapp.screens.record.NewRecordActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.opencsv.CSVWriter;
@@ -28,40 +29,43 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class ProjectRecordsActivity extends AppCompatActivity {
 
     private RecordFirestoreManager recordFireStoreManager;
-    String projectId, projectName, recordId;
+    private String projectId, projectName;
     private String TAG = "Record List";
+    private List<Record> recordList = new ArrayList<>();
     List<String[]> data;
     private ListView recordListView;
-    private ArrayAdapter recordNamesAdapter;
+    private ProjectRecordsAdapter projectRecordsAdapter;
     ArrayList<String> recordNames;
     ArrayList<String> recordIDs;
-    ArrayList imageLinks;
-    ArrayList audioLinks;
-    String selectedRecord;
-    public static final String Project_Id = "com.example.datacollectionapp.Project_Id";
-    public static final String Record_Id = "com.example.datacollectionapp.Record_Id ";
+    ArrayList<String> imageLinks;
+    ArrayList<String> audioLinks;
+    public static final String PROJECT_ID = "com.example.datacollectionapp.Project_Id";
+    public static final String PROJECT_NAME = "com.example.datacollectionapp.Project_Id";
+    public static final String RECORD_ID = "com.example.datacollectionapp.Record_Id ";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_project_records);
-        data = new ArrayList<String[]>();
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        data = new ArrayList<>();
         recordNames = new ArrayList();
-        recordIDs = new ArrayList();
-        imageLinks = new ArrayList();
-        audioLinks = new ArrayList();
+        recordIDs = new ArrayList<>();
+        imageLinks = new ArrayList<>();
+        audioLinks = new ArrayList<>();
         Intent intent = getIntent();
-        projectId = intent.getStringExtra(ProjectListActivity.PROJECT_ID);
-        projectName = intent.getStringExtra(ProjectListActivity.PROJECT_NAME);
+//        projectId = intent.getStringExtra(ProjectListActivity.PROJECT_ID);
+//        projectName = intent.getStringExtra(ProjectListActivity.PROJECT_NAME);
+        projectId = "BlQEPLJfcHY9Fxd8A1XR";
+        projectName = "Human Survey";
         recordFireStoreManager = RecordFirestoreManager.getInstance();
         recordFireStoreManager.getRecordsByProject(projectId,onCompleteListener);
-
     }
 
     public void share(View view){
@@ -87,6 +91,7 @@ public class ProjectRecordsActivity extends AppCompatActivity {
     }
 
     private String createAndWriteFile(){
+        List<String[]> data = getData();
         String csv = (this.getFilesDir().getAbsolutePath() + "/"+projectName+".csv");
         CSVWriter writer = null;
         Log.d(TAG,csv);
@@ -100,72 +105,81 @@ public class ProjectRecordsActivity extends AppCompatActivity {
         return csv;
     }
 
-    private OnCompleteListener onCompleteListener = new OnCompleteListener<QuerySnapshot>() {
+    private List<String[]> getData() {
+        List<String[]> data = new ArrayList<>();
         String headers = "";
+        for (RecordField recordField : recordList.get(0).getRecordFields()) {
+            headers = headers + "," + recordField.getFieldName();
+        }
+        String[] csvHeaders = headers.split(",");
+        data.add(csvHeaders);
+
+        for (Record record : recordList) {
+            String dataRow = "";
+            for (RecordField recordField : record.getRecordFields()) {
+                switch (recordField.getDataType()) {
+                    case IMAGE:
+                        imageLinks.add(recordField.getValue());
+                    case AUDIO:
+                        audioLinks.add(recordField.getValue());
+                }
+
+                dataRow += "," + recordField.getValue();
+            }
+            String[] csvDataRow = dataRow.split(",");
+            data.add(csvDataRow);
+        }
+        return data;
+    }
+
+    private OnCompleteListener onCompleteListener = new OnCompleteListener<QuerySnapshot>() {
+
         @Override
         public void onComplete(@NonNull Task<QuerySnapshot> task) {
             if (task.isSuccessful()) {
-                if (!task.getResult().getDocuments().isEmpty()){
-                    DocumentSnapshot firstDocument = task.getResult().getDocuments().get(0);
-                    ArrayList forHeaders = (ArrayList) firstDocument.getData().get("recordFields");
-                    for(Object i : forHeaders ){
-                        HashMap recordList = (HashMap) i;
-                        headers = headers + "," +(String) recordList.get("fieldName");
+                if (task.getResult().size() > 0) {
+                    for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
+                        Record record = documentSnapshot.toObject(Record.class);
+                        recordList.add(record);
                     }
-                    String[] csvHeaders = headers.split(",");
-                    data.add(csvHeaders);
+                    showRecordList();
+                } else {
+                    Log.e(TAG, "Error retrieving record details", task.getException());
                 }
-                int recordCount = 0;
-                for (QueryDocumentSnapshot document : task.getResult()) {
-                    String dataRow = "";
-                    //Log.d(TAG, document.getId() + " => " + document.getData());
-                    recordIDs.add(document.getId());
-                    ArrayList abc = (ArrayList) document.get("recordFields");
-                    Log.d(TAG, String.valueOf(abc));
-                    for(Object i : abc){
-                        HashMap recordList = (HashMap) i;
-                        Log.d(TAG, String.valueOf(recordList.get("fieldName")));
-                        if(((String) recordList.get("dataType")).contains("IMAGE")){
-                            imageLinks.add(recordList.get("value"));
-                        }
-                        else if(((String) recordList.get("dataType")).contains("AUDIO")){
-                            audioLinks.add(recordList.get("value"));
-                        }
-
-                        dataRow += "," + (String) recordList.get("value");
-                    }
-                    recordCount += 1;
-                    recordNames.add("Record " + String.valueOf(recordCount));
-                    String[] csvData = dataRow.split(",");
-                    data.add(csvData);
-                    recordView();
-                }
-
-            } else {
-                Log.d(TAG, "Error getting documents: ", task.getException());
             }
         }
     };
 
-    private void recordView(){
+    private void showRecordList(){
+        TextView textProjectName = findViewById(R.id.textProjectName);
+        textProjectName.setText(projectName);
         recordListView = (ListView) findViewById(R.id.recordListView);
-        recordNamesAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, recordNames);
-        recordListView.setAdapter(recordNamesAdapter);
-        recordListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                selectedRecord = (String) recordNames.get(i);
-                //recordId = (String) recordIDs.get(i);
-                Log.i(TAG,selectedRecord);
-                goToViewRecord();
-            }
-        });
+        projectRecordsAdapter = new ProjectRecordsAdapter(this, recordList);
+        recordListView.setAdapter(projectRecordsAdapter);
     }
 
-    private void goToViewRecord(){
-        Intent intent = new Intent(this, ViewRecordActivity.class);
-        intent.putExtra(Project_Id, projectId);
-        intent.putExtra(Record_Id, recordId);
+    public void deleteRecord(String recordId, int position) {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setTitle("Delete Record");
+        alertDialog.setMessage("Are you sure you want to delete this record?");
+
+        alertDialog.setPositiveButton("Delete", (dialog, which) -> {
+            recordFireStoreManager.deleteRecord(projectId, recordId);
+            dialog.dismiss();
+            recreate();
+        });
+
+        alertDialog.setNegativeButton("Cancel", (dialog, which) -> {
+            dialog.cancel();
+        });
+
+        alertDialog.show();
+    }
+
+    public void addNewRecord(View view) {
+        Intent intent = new Intent(this, NewRecordActivity.class);
+        intent.putExtra(NewRecordActivity.PROJECT_ID, projectId);
+        intent.putExtra(NewRecordActivity.PROJECT_NAME, projectName);
         startActivity(intent);
     }
 }

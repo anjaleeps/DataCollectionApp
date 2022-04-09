@@ -25,6 +25,7 @@ import com.example.datacollectionapp.models.Project;
 import com.example.datacollectionapp.models.Record;
 import com.example.datacollectionapp.models.RecordField;
 import com.example.datacollectionapp.models.TemplateField;
+import com.example.datacollectionapp.screens.projectrecords.ProjectRecordsActivity;
 import com.example.datacollectionapp.screens.record.viewholder.AudioRecordViewHolder;
 import com.example.datacollectionapp.screens.record.viewholder.ImageRecordViewHolder;
 import com.example.datacollectionapp.screens.record.viewholder.LocationRecordViewHolder;
@@ -44,12 +45,14 @@ import java.util.Objects;
 public class NewRecordActivity extends AppCompatActivity {
 
     public static final String PROJECT_ID = "PROJECT_ID";
+    public static final String PROJECT_NAME = "PROJECT_NAME";
     public static final int CHOOSE_IMAGE_REQUEST = 32;
     public static final int CHOOSE_AUDIO_REQUEST = 64;
 
     public static final String TAG = "NewRecordActivity";
 
     private String projectId;
+    private String projectName;
     private RecyclerView recordRecycleView;
     private RecordFieldAdapter recordFieldAdapter;
     private List<TemplateField> formTemplate = new ArrayList<>();
@@ -67,9 +70,9 @@ public class NewRecordActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
 
-//        Intent intent = getIntent();
-//        projectId = intent.getStringExtra(PROJECT_ID);
-        projectId = "BlQEPLJfcHY9Fxd8A1XR";
+        Intent intent = getIntent();
+        projectId = intent.getStringExtra(PROJECT_ID);
+        projectName = intent.getStringExtra(PROJECT_NAME);
         projectFirestoreManager = ProjectFirestoreManager.getInstance();
         recordFirestoreManager = RecordFirestoreManager.getInstance();
         firebaseStorageManager = FirebaseStorageManager.getInstance();
@@ -174,8 +177,10 @@ public class NewRecordActivity extends AppCompatActivity {
                     ((LocationRecordViewHolder) Objects.requireNonNull(recordRecycleView.findViewHolderForAdapterPosition(i))).stopLocationUpdates();
             }
         }
-        //Intent intent = new Intent(this, ProjectRecordsActivity.class);
-        //startActivity(intent);
+        Intent intent = new Intent(this, ProjectRecordsActivity.class);
+        intent.putExtra(ProjectRecordsActivity.PROJECT_ID, projectId);
+        intent.putExtra(ProjectRecordsActivity.PROJECT_NAME, projectName);
+        startActivity(intent);
     }
 
     private void uploadImage(Record record, Uri filePath, int position) {
@@ -212,7 +217,4 @@ public class NewRecordActivity extends AppCompatActivity {
         return fileName;
     }
 
-    private void setMap() {
-
-    }
 }
