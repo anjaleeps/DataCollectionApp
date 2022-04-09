@@ -11,12 +11,15 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 
 import com.example.datacollectionapp.R;
+import com.example.datacollectionapp.database.connectionmanagers.FirebaseStorageManager;
 import com.example.datacollectionapp.models.RecordField;
 import com.example.datacollectionapp.screens.record.NewRecordActivity;
 
 import java.util.List;
 
 public class AudioRecordViewHolder extends RecordViewHolder {
+
+    private final FirebaseStorageManager firebaseStorageManager;
     private TextView audioName;
     private Button chooseButton;
     private Uri filePath;
@@ -26,7 +29,7 @@ public class AudioRecordViewHolder extends RecordViewHolder {
         chooseButton = itemView.findViewById(R.id.buttonChooseAudio);
         audioName = itemView.findViewById(R.id.textView);
         chooseButton.setOnClickListener(this::chooseAudio);
-
+        firebaseStorageManager = FirebaseStorageManager.getInstance();
     }
 
     public void chooseAudio(View view) {
@@ -41,6 +44,15 @@ public class AudioRecordViewHolder extends RecordViewHolder {
     public void setAudio(Uri filepath, String audioName) {
         this.filePath = filepath;
         setAudioName(audioName);
+    }
+
+    public void showAudio(String downloadUri) {
+        String fileName = firebaseStorageManager.getFileName(downloadUri);
+        setAudio(null, fileName);
+    }
+
+    public void hideChooseButton() {
+        chooseButton.setVisibility(View.GONE);
     }
 
     public Button getChooseButton() {

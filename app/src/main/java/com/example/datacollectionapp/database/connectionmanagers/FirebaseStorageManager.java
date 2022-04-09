@@ -1,5 +1,6 @@
 package com.example.datacollectionapp.database.connectionmanagers;
 
+import android.graphics.Bitmap;
 import android.net.Uri;
 
 import androidx.annotation.NonNull;
@@ -15,6 +16,7 @@ import java.util.UUID;
 
 public class FirebaseStorageManager {
 
+    private final long TEN_MEGABYTE = 1024 * 1024 * 10;
     private final FirebaseStorage firebaseStorage;
     private final StorageReference storageReference;
     private static FirebaseStorageManager instance;
@@ -53,5 +55,26 @@ public class FirebaseStorageManager {
                     return childReference.getDownloadUrl();
                 })
                 .addOnCompleteListener(onCompleteListener);
+    }
+
+    public void downloadImage(String downloadUri, OnCompleteListener<byte[]> onCompleteListener) {
+        String fileName = getFileName(downloadUri);
+        StorageReference childReference = storageReference.child("images/" + fileName);
+        childReference
+                .getBytes(TEN_MEGABYTE)
+                .addOnCompleteListener(onCompleteListener);
+    }
+
+    public void downloadAudio(String downloadUri, OnCompleteListener<byte[]> onCompleteListener) {
+        String fileName = getFileName(downloadUri);
+        StorageReference childReference = storageReference.child("audio/" + fileName);
+        childReference
+                .getBytes(TEN_MEGABYTE)
+                .addOnCompleteListener(onCompleteListener);
+    }
+
+    public String getFileName(String downloadUri) {
+        StorageReference storageReference = firebaseStorage.getReferenceFromUrl(downloadUri);
+        return storageReference.getName();
     }
 }

@@ -42,7 +42,8 @@ public class ProjectRecordsActivity extends AppCompatActivity {
     private RecordFirestoreManager recordFireStoreManager;
     private FirebaseAuthentication firebaseAuthentication;
     private ProjectFirestoreManager projectFirestoreManager;
-    private String projectId, projectName;
+    private Project project;
+    private String projectId;
     private String TAG = "Record List";
     private List<Record> recordList = new ArrayList<>();
     List<String[]> data;
@@ -69,9 +70,7 @@ public class ProjectRecordsActivity extends AppCompatActivity {
         audioLinks = new ArrayList<>();
         Intent intent = getIntent();
 //        projectId = intent.getStringExtra(ProjectListActivity.PROJECT_ID);
-//        projectName = intent.getStringExtra(ProjectListActivity.PROJECT_NAME);
         projectId = "BlQEPLJfcHY9Fxd8A1XR";
-        projectName = "Human Survey";
         recordFireStoreManager = RecordFirestoreManager.getInstance();
         projectFirestoreManager = ProjectFirestoreManager.getInstance();
         firebaseAuthentication = FirebaseAuthentication.getInstance();
@@ -91,7 +90,7 @@ public class ProjectRecordsActivity extends AppCompatActivity {
         projectFirestoreManager.getProjectById(projectId, task -> {
             if (task.isSuccessful()) {
                 if (task.getResult() != null) {
-                    Project project = task.getResult().toObject(Project.class);
+                    project = task.getResult().toObject(Project.class);
                     if (project.getFormTemplate() != null && project.getFormTemplate().size() > 0) {
                         recordFireStoreManager.getRecordsByProject(projectId,onCompleteListener);
                     } else {
@@ -133,7 +132,7 @@ public class ProjectRecordsActivity extends AppCompatActivity {
 
     private String createAndWriteFile(){
         List<String[]> data = getData();
-        String csv = (this.getFilesDir().getAbsolutePath() + "/"+projectName+".csv");
+        String csv = (this.getFilesDir().getAbsolutePath() + "/"+project.getProjectName()+".csv");
         CSVWriter writer = null;
         Log.d(TAG,csv);
         try {
@@ -193,7 +192,7 @@ public class ProjectRecordsActivity extends AppCompatActivity {
 
     private void showRecordList(){
         TextView textProjectName = findViewById(R.id.textProjectName);
-        textProjectName.setText(projectName);
+        textProjectName.setText(project.getProjectName());
         recordListView = (ListView) findViewById(R.id.recordListView);
         projectRecordsAdapter = new ProjectRecordsAdapter(this, recordList);
         recordListView.setAdapter(projectRecordsAdapter);
@@ -220,7 +219,6 @@ public class ProjectRecordsActivity extends AppCompatActivity {
     public void addNewRecord(View view) {
         Intent intent = new Intent(this, NewRecordActivity.class);
         intent.putExtra(NewRecordActivity.PROJECT_ID, projectId);
-        intent.putExtra(NewRecordActivity.PROJECT_NAME, projectName);
         startActivity(intent);
     }
 }

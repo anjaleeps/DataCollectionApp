@@ -72,7 +72,6 @@ public class NewRecordActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         projectId = intent.getStringExtra(PROJECT_ID);
-        projectName = intent.getStringExtra(PROJECT_NAME);
         projectFirestoreManager = ProjectFirestoreManager.getInstance();
         recordFirestoreManager = RecordFirestoreManager.getInstance();
         firebaseStorageManager = FirebaseStorageManager.getInstance();
@@ -105,7 +104,7 @@ public class NewRecordActivity extends AppCompatActivity {
     private void setupRecordRecycleView() {
         recordRecycleView = findViewById(R.id.recordRecyclerView);
         recordRecycleView.setLayoutManager(new LinearLayoutManager(this));
-        recordFieldAdapter = new RecordFieldAdapter(this, recordFields);
+        recordFieldAdapter = new RecordFieldAdapter(this, recordFields, RecordFieldAdapter.CREATE_RECORD);
         recordRecycleView.setAdapter(recordFieldAdapter);
 
         for (TemplateField templateField : formTemplate) {
@@ -179,7 +178,6 @@ public class NewRecordActivity extends AppCompatActivity {
         }
         Intent intent = new Intent(this, ProjectRecordsActivity.class);
         intent.putExtra(ProjectRecordsActivity.PROJECT_ID, projectId);
-        intent.putExtra(ProjectRecordsActivity.PROJECT_NAME, projectName);
         startActivity(intent);
     }
 

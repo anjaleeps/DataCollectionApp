@@ -7,27 +7,35 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.datacollectionapp.R;
 import com.example.datacollectionapp.database.connectionmanagers.ProjectFirestoreManager;
 import com.example.datacollectionapp.database.connectionmanagers.RecordFirestoreManager;
 import com.example.datacollectionapp.models.Project;
+import com.example.datacollectionapp.models.Record;
 import com.example.datacollectionapp.models.RecordField;
 import com.example.datacollectionapp.models.TemplateField;
 import com.example.datacollectionapp.screens.projectrecords.ProjectRecordsActivity;
 import com.google.firebase.firestore.DocumentSnapshot;
 
+import org.w3c.dom.Text;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ViewRecordActivity extends AppCompatActivity {
+
+    private static final String timestampPattern = "dd-MM-yyyy HH:mm:ss";
     private String TAG = "View Record";
-    String projectId, recordId, projectName;
+    String recordId;
+    String projectId;
+    Record record;
+    private SimpleDateFormat dateFormat;
     private ProjectFirestoreManager projectFirestoreManager;
     private RecordFirestoreManager recordFirestoreManager;
-    private List<TemplateField> formTemplate = new ArrayList<>();
-    private List<RecordField> recordFields = new ArrayList<>();
     private RecyclerView recordRecycleView;
     private RecordFieldAdapter recordFieldAdapter;
 
@@ -35,42 +43,41 @@ public class ViewRecordActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_record);
-        Intent intent = getIntent();
-        projectId = intent.getStringExtra(ProjectRecordsActivity.PROJECT_ID);
-        recordId = intent.getStringExtra(ProjectRecordsActivity.RECORD_ID);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
         projectFirestoreManager = ProjectFirestoreManager.getInstance();
         recordFirestoreManager = RecordFirestoreManager.getInstance();
-        getFormTemplate();
+        dateFormat = new SimpleDateFormat(timestampPattern);
+
+        Intent intent = getIntent();
+        recordId = intent.getStringExtra(ProjectRecordsActivity.RECORD_ID);
+        projectId = intent.getStringExtra(ProjectRecordsActivity.PROJECT_ID);
+        showRecord();
     }
 
-    private void getFormTemplate() {
-        projectFirestoreManager.getProjectById(projectId, task -> {
+    private void showRecord() {
+        recordFirestoreManager.getRecordById(projectId, recordId, task -> {
             if (task.isSuccessful() && task.getResult() != null) {
                 DocumentSnapshot documentSnapshot = task.getResult();
-                Project project = documentSnapshot.toObject(Project.class);
-                projectName = project.getProjectName();
-                formTemplate = project.getFormTemplate();
+                record = documentSnapshot.toObject(Record.class);
                 setupRecordRecycleView();
             } else {
-                Toast.makeText(this, "Error retrieving the form template", Toast.LENGTH_SHORT).show();
-                Log.w(TAG, "Error retrieving the form template", task.getException());
+                Toast.makeText(this, "Error retrieving record data", Toast.LENGTH_SHORT).show();
+                Log.w(TAG, "Error retrieving the record data", task.getException());
             }
         });
     }
 
     private void setupRecordRecycleView() {
-        recordRecycleView = findViewById(R.id.viewRecordRecyclerView);
+        TextView textTimestamp = findViewById(R.id.textTimestamp);
+        String recordTimestamp = dateFormat.format(record.getTimestamp().toDate());
+        textTimestamp.setText(recordTimestamp);
+
+        recordRecycleView = findViewById(R.id.recordRecyclerView);
         recordRecycleView.setLayoutManager(new LinearLayoutManager(this));
-        recordFieldAdapter = new RecordFieldAdapter(this, recordFields);
+        recordFieldAdapter = new RecordFieldAdapter(this, record.getRecordFields(), RecordFieldAdapter.VIEW_RECORD);
         recordRecycleView.setAdapter(recordFieldAdapter);
-
-        for (TemplateField templateField : formTemplate) {
-            RecordField newRecordField = new RecordField(templateField.getFieldName(), templateField.getDatatype());
-            recordFields.add(newRecordField);
-        }
-
         recordFieldAdapter.notifyDataSetChanged();
-
     }
 
 

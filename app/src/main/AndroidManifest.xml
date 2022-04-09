@@ -27,13 +27,13 @@
 
         </activity>
         <activity android:name=".screens.record.ViewRecordActivity"
+            android:parentActivityName=".screens.projectlist.ProjectListActivity"
             android:exported="false" />
 
         <activity android:name=".screens.record.NewRecordActivity"></activity>
 
         <activity android:name=".screens.formtemplate.NewFormTemplateActivity"
-            android:exported="true"
-            android:parentActivityName=".screens.project.NewProjectActivity" />
+            android:exported="true" />
         <activity android:name=".screens.project.NewProjectActivity"
             android:exported="true" />
         <activity

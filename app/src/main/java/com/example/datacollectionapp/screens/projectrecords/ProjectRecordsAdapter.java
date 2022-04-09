@@ -79,9 +79,10 @@ public class ProjectRecordsAdapter extends BaseAdapter {
     }
 
     public void selectRecord(View view, int position) {
-        String recordId = recordList.get(position).getRecordId();
+        Record record = recordList.get(position);
         Intent intent = new Intent(context, ViewRecordActivity.class);
-        intent.putExtra(ProjectRecordsActivity.RECORD_ID, recordId);
+        intent.putExtra(ProjectRecordsActivity.RECORD_ID, record.getRecordId());
+        intent.putExtra(ProjectRecordsActivity.PROJECT_ID, record.getProjectId());
         context.startActivity(intent);
     }
 }
