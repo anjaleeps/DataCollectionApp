@@ -68,7 +68,8 @@ public class ProjectListAdapter extends BaseAdapter {
     public void selectProject(View view, int position) {
         String projectId = projectIds.get(position);
         Intent intent = new Intent(context, ProjectRecordsActivity.class);
-        intent.putExtra(ProjectListActivity.EXTRA_MESSAGE, projectId);
+        intent.putExtra(ProjectListActivity.PROJECT_ID, projectId);
+        intent.putExtra(ProjectListActivity.PROJECT_NAME, projectNames.get(position));
         context.startActivity(intent);
     }
 

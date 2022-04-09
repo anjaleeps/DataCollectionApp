@@ -36,6 +36,8 @@ public class ProjectListActivity extends AppCompatActivity {
     ArrayList<String> projectNames;
     ArrayList<String> projects;
     public static final String EXTRA_MESSAGE = "com.example.datacollectionapp.MESSAGE";
+    public static final String PROJECT_ID = "com.example.datacollectionapp.PROJECT_ID";
+    public static final String PROJECT_NAME = "com.example.datacollectionapp.PROJECT_NAME ";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,8 +61,8 @@ public class ProjectListActivity extends AppCompatActivity {
     public void getProjectList(){
         final String userId = firebaseAuthentication.getUserId();
         projectFirestoreManager.getAllProjectsByUser(userId, onCompleteListener);
-        projectNames = new ArrayList();
-        projects = new ArrayList();
+        projectNames = new ArrayList<>();
+        projects = new ArrayList<>();
     }
 
     private OnCompleteListener onCompleteListener = new OnCompleteListener<QuerySnapshot>() {

@@ -7,7 +7,6 @@ import androidx.core.content.FileProvider;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -40,8 +39,8 @@ public class ProjectRecordsActivity extends AppCompatActivity {
     List<String[]> data;
     private ListView recordListView;
     private ArrayAdapter recordNamesAdapter;
-    ArrayList recordNames;
-    ArrayList recordIDs;
+    ArrayList<String> recordNames;
+    ArrayList<String> recordIDs;
     ArrayList imageLinks;
     ArrayList audioLinks;
     String selectedRecord;
@@ -58,8 +57,8 @@ public class ProjectRecordsActivity extends AppCompatActivity {
         imageLinks = new ArrayList();
         audioLinks = new ArrayList();
         Intent intent = getIntent();
-        projectId = intent.getStringExtra(ProjectListActivity.Project_Id);
-        projectName = intent.getStringExtra(ProjectListActivity.Project_Name);
+        projectId = intent.getStringExtra(ProjectListActivity.PROJECT_ID);
+        projectName = intent.getStringExtra(ProjectListActivity.PROJECT_NAME);
         recordFireStoreManager = RecordFirestoreManager.getInstance();
         recordFireStoreManager.getRecordsByProject(projectId,onCompleteListener);
 

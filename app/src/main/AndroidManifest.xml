@@ -23,13 +23,18 @@
         <activity android:name=".screens.project.EditProjectActivity"
             android:parentActivityName=".screens.projectlist.ProjectListActivity" />
         <activity android:name=".screens.projectlist.ProjectListActivity"
-            android:exported="true"/>
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity android:name=".screens.record.ViewRecordActivity"
             android:exported="false" />
 
-        <activity android:name=".screens.record.NewRecordActivity">
+        <activity android:name=".screens.record.NewRecordActivity"></activity>
 
-        </activity>
         <activity android:name=".screens.formtemplate.NewFormTemplateActivity"
             android:exported="true"
             android:parentActivityName=".screens.project.NewProjectActivity" />
