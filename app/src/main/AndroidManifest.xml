@@ -17,8 +17,17 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.DataCollectionApp">
-        <activity android:name=".screens.record.UpdateRecordActivity"
-            android:parentActivityName=".screens.projectrecords.ProjectRecordsActivity"/>
+        <activity android:name=".screens.splashscreen.SplashScreenActivity"
+            android:theme="@style/SplashScreen">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".screens.record.UpdateRecordActivity"
+            android:parentActivityName=".screens.projectrecords.ProjectRecordsActivity" />
         <activity android:name=".screens.user.LoginActivity" />
         <activity android:name=".screens.user.RegisterActivity" />
         <activity
@@ -27,13 +36,9 @@
         <activity
             android:name=".screens.projectlist.ProjectListActivity"
             android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
-        <activity android:name=".screens.record.ViewRecordActivity"
+        <activity
+            android:name=".screens.record.ViewRecordActivity"
             android:exported="false"
             android:parentActivityName=".screens.projectrecords.ProjectRecordsActivity" />
         <activity android:name=".screens.record.NewRecordActivity" />
@@ -46,8 +51,7 @@
         <activity
             android:name=".screens.projectrecords.ProjectRecordsActivity"
             android:exported="true"
-            android:parentActivityName=".screens.projectlist.ProjectListActivity">
-        </activity>
+            android:parentActivityName=".screens.projectlist.ProjectListActivity"></activity>
 
         <provider
             android:name="androidx.core.content.FileProvider"
