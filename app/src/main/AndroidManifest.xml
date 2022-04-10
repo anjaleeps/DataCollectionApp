@@ -26,7 +26,13 @@
             android:parentActivityName=".screens.projectlist.ProjectListActivity" />
         <activity
             android:name=".screens.projectlist.ProjectListActivity"
-            android:exported="true"></activity>
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity android:name=".screens.record.ViewRecordActivity"
             android:exported="false"
             android:parentActivityName=".screens.projectrecords.ProjectRecordsActivity" />
@@ -41,11 +47,6 @@
             android:name=".screens.projectrecords.ProjectRecordsActivity"
             android:exported="true"
             android:parentActivityName=".screens.projectlist.ProjectListActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
         <provider

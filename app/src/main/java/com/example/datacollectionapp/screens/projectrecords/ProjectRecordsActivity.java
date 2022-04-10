@@ -23,6 +23,7 @@ import com.example.datacollectionapp.models.Project;
 import com.example.datacollectionapp.models.Record;
 import com.example.datacollectionapp.models.RecordField;
 import com.example.datacollectionapp.screens.formtemplate.NewFormTemplateActivity;
+import com.example.datacollectionapp.screens.projectlist.ProjectListActivity;
 import com.example.datacollectionapp.screens.record.NewRecordActivity;
 import com.example.datacollectionapp.screens.user.RegisterActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -69,8 +70,7 @@ public class ProjectRecordsActivity extends AppCompatActivity {
         imageLinks = new ArrayList<>();
         audioLinks = new ArrayList<>();
         Intent intent = getIntent();
-//        projectId = intent.getStringExtra(ProjectListActivity.PROJECT_ID);
-        projectId = "BlQEPLJfcHY9Fxd8A1XR";
+        projectId = intent.getStringExtra(ProjectListActivity.PROJECT_ID);
         recordFireStoreManager = RecordFirestoreManager.getInstance();
         projectFirestoreManager = ProjectFirestoreManager.getInstance();
         firebaseAuthentication = FirebaseAuthentication.getInstance();

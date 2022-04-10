@@ -68,7 +68,6 @@ public class ImageRecordViewHolder extends RecordViewHolder {
                 Log.e(NewRecordActivity.TAG, "Failed to load image");
             }
         });
-
     }
 
     public Button getChooseButton() {
