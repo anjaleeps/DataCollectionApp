@@ -40,7 +40,7 @@ public class ProjectFirestoreManager {
                 .addOnCompleteListener(onCompleteListener);
     }
 
-    public void getAllProjectsByUser(OnCompleteListener<QuerySnapshot> onCompleteListener, String username) {
+    public void getAllProjectsByUser(String username, OnCompleteListener<QuerySnapshot> onCompleteListener) {
         collectionReference.whereEqualTo(ProjectFirestoreContract.USERNAME, username)
                 .orderBy(ProjectFirestoreContract.PROJECT_NAME)
                 .get()
@@ -54,6 +54,8 @@ public class ProjectFirestoreManager {
     }
 
     public void deleteProject(String projectId) {
+        RecordFirestoreManager recordFirestoreManager = RecordFirestoreManager.getInstance();
+        recordFirestoreManager.deleteAllRecordsByProjectId(projectId);
         DocumentReference documentReference = collectionReference.document(projectId);
         documentReference.delete();
     }

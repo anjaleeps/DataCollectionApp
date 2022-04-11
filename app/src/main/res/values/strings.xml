@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">DataCollectionApp</string>
+    <string name="app_name">quick collect</string>
     <string-array name="data_types">
         <item>text</item>
         <item>number</item>

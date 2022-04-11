@@ -1,13 +1,19 @@
 package com.example.datacollectionapp.database.connectionmanagers;
 
+import androidx.annotation.NonNull;
+
 import com.example.datacollectionapp.database.contracts.RecordFirestoreContract;
 import com.example.datacollectionapp.models.Record;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.List;
 
 public class RecordFirestoreManager {
 
@@ -32,6 +38,7 @@ public class RecordFirestoreManager {
                 .document(record.getProjectId())
                 .collection(RecordFirestoreContract.SUB_COLLECTION_NAME)
                 .document();
+
         documentReference.set(record);
         return documentReference.getId();
     }
@@ -70,5 +77,16 @@ public class RecordFirestoreManager {
                 .collection(RecordFirestoreContract.SUB_COLLECTION_NAME)
                 .document(recordId)
                 .delete();
+    }
+
+    public void deleteAllRecordsByProjectId(String projectId) {
+        getRecordsByProject(projectId, task -> {
+            if (task.isSuccessful()) {
+                List<Record> records = task.getResult().toObjects(Record.class);
+                for (Record record : records) {
+                    deleteRecord(projectId, record.getRecordId());
+                }
+            }
+        });
     }
 }

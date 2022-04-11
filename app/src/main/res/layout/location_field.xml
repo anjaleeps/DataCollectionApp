@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:weightSum="5">
+
+    <TextView
+        android:id="@+id/textFieldName"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:layout_marginStart="10dp"
+        android:textSize="20sp"
+        android:text="TextView" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="4"
+        android:weightSum="2"
+        android:orientation="horizontal"
+        android:layout_margin="10dp">
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="20dp"
+            android:weightSum="6"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textLatitude"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:gravity="center_vertical"
+                android:layout_weight="1"
+                android:textSize="16sp"
+                android:text="Latitude" />
+
+            <EditText
+                android:id="@+id/editLatitude"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginBottom="10dp"
+                android:layout_weight="2"
+                android:enabled="false"
+                android:text=""
+                android:textColor="@color/grey_500"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/textLongitude"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:gravity="center_vertical"
+                android:layout_weight="1"
+                android:textSize="16sp"
+                android:minHeight="20dp"
+                android:text="Latitude" />
+
+            <EditText
+                android:id="@+id/editLongitude"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginBottom="10dp"
+                android:layout_weight="2"
+                android:enabled="false"
+                android:textColor="@color/grey_500"
+                android:text=""
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_margin="10dp">
+
+            <Button
+                android:id="@+id/buttonPickLocation"
+                style="@style/SmallButtonStyle"
+                android:layout_width="125dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="2dp"
+                android:minHeight="22dp"
+                android:visibility="invisible"
+                android:text="Pick location" />
+
+            <Button
+                android:id="@+id/buttonCurrentLocation"
+                style="@style/SmallButtonStyle"
+                android:layout_width="125dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="2dp"
+                android:minHeight="22dp"
+                android:text="My location" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>
