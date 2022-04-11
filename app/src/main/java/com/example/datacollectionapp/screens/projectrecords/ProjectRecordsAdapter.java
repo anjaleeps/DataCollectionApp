@@ -15,6 +15,7 @@ import com.example.datacollectionapp.screens.record.UpdateRecordActivity;
 import com.example.datacollectionapp.screens.record.ViewRecordActivity;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 public class ProjectRecordsAdapter extends BaseAdapter {
@@ -55,7 +56,12 @@ public class ProjectRecordsAdapter extends BaseAdapter {
         TextView recordName = view.findViewById(R.id.textViewName);
         ImageView buttonEdit = view.findViewById(R.id.buttonEdit);
         ImageView buttonDelete = view.findViewById(R.id.buttonDelete);
-        String recordTimestamp = dateFormat.format(record.getTimestamp().toDate());
+        String recordTimestamp;
+        if (record.getTimestamp() != null) {
+             recordTimestamp = dateFormat.format(record.getTimestamp().toDate());
+        } else {
+            recordTimestamp = dateFormat.format(new Date());
+        }
 
         recordName.setText(recordTimestamp);
         recordName.setTextSize(14);

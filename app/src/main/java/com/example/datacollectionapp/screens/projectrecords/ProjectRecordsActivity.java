@@ -235,7 +235,7 @@ public class ProjectRecordsActivity extends AppCompatActivity {
         @Override
         public void onComplete(@NonNull Task<QuerySnapshot> task) {
             if (task.isSuccessful()) {
-                if (task.getResult().size() > 0) {
+                if (task.getResult() != null) {
                     for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
                         Record record = documentSnapshot.toObject(Record.class);
                         recordList.add(record);

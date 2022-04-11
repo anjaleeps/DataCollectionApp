@@ -25,6 +25,7 @@ import com.example.datacollectionapp.models.Project;
 import com.example.datacollectionapp.models.Record;
 import com.example.datacollectionapp.models.RecordField;
 import com.example.datacollectionapp.models.TemplateField;
+import com.example.datacollectionapp.screens.projectlist.ProjectListActivity;
 import com.example.datacollectionapp.screens.projectrecords.ProjectRecordsActivity;
 import com.example.datacollectionapp.screens.record.viewholder.AudioRecordViewHolder;
 import com.example.datacollectionapp.screens.record.viewholder.ImageRecordViewHolder;
@@ -177,7 +178,7 @@ public class NewRecordActivity extends AppCompatActivity {
             }
         }
         Intent intent = new Intent(this, ProjectRecordsActivity.class);
-        intent.putExtra(ProjectRecordsActivity.PROJECT_ID, projectId);
+        intent.putExtra(ProjectListActivity.PROJECT_ID, projectId);
         startActivity(intent);
     }
 
