@@ -42,6 +42,7 @@ import com.opencsv.CSVWriter;
 
 import org.apache.commons.io.FilenameUtils;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
@@ -49,6 +50,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -151,7 +154,7 @@ public class ProjectRecordsActivity extends AppCompatActivity {
         //String url = "https://firebasestorage.googleapis.com/v0/b/data-collection-app-6221e.appspot.com/o/images%2F2d1f9fd0-fb93-4b3b-b51b-2c68add7a705?alt=media&token=25e0626b-bbab-4d77-b1fe-414a0234c680";
         String csv = createAndWriteCSV();
         cacheFilePaths.add(csv);
-        new DownloadImage().execute(imageLinks);
+        new DownloadImageAudio().execute(imageLinks);
     }
 
     private void shareZip(File zip){
@@ -205,6 +208,43 @@ public class ProjectRecordsActivity extends AppCompatActivity {
         } catch (Exception e){
             e.printStackTrace();
             Log.e(TAG,"cannot create Image from Bitmap" + e);
+        }
+        return filePath.getAbsolutePath();
+    }
+
+    private String saveAudio(String url){
+        int count;
+        File filePath = null;
+        try {
+            if(isExternalStorageWritable()){
+                filePath = new File(this.getExternalCacheDir(),FilenameUtils.getBaseName(url)+".mp3" );
+            }
+            else{
+                filePath = new File(getCacheDir(),FilenameUtils.getBaseName(url)+".mp3" );
+            }
+            if(filePath.exists()){
+                filePath.delete();
+            }
+            URL audioUrl = new URL(url);
+            URLConnection conn = audioUrl.openConnection();
+            conn.connect();
+            int fileLength = conn.getContentLength();
+            InputStream audioInput = new BufferedInputStream(audioUrl.openStream());
+            OutputStream audioOutput = new FileOutputStream(filePath);
+            byte data[] = new byte[1024];
+            long total = 0;
+            while((count = audioInput.read(data)) != -1){
+                total += count;
+                //publishProgress(""+(int)((total*100)/filelength));
+                audioOutput.write(data, 0, count);
+            }
+            audioOutput.flush();
+            audioOutput.close();
+            audioInput.close();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return filePath.getAbsolutePath();
     }
@@ -309,9 +349,10 @@ public class ProjectRecordsActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private class DownloadImage extends AsyncTask<ArrayList<String>, Void, File> {
+    private class DownloadImageAudio extends AsyncTask<ArrayList<String>, Void, File> {
         private ProgressDialog progressDialog;
-        String path;
+        String imagePath;
+        String audioPath;
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -329,12 +370,18 @@ public class ProjectRecordsActivity extends AppCompatActivity {
                 try {
                     InputStream input = new java.net.URL(url).openStream();
                     bitmap = BitmapFactory.decodeStream(input);
-                    path = saveBitmap(bitmap,url);
-                    cacheFilePaths.add(path);
+                    imagePath = saveBitmap(bitmap,url);
+                    cacheFilePaths.add(imagePath);
                 } catch (MalformedURLException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
                     e.printStackTrace();
+                }
+            }
+            if(!audioLinks.isEmpty()){
+                for(String audio : audioLinks){
+                    audioPath = saveAudio(audio);
+                    cacheFilePaths.add(audioPath);
                 }
             }
             File zip = createZip();
@@ -349,4 +396,5 @@ public class ProjectRecordsActivity extends AppCompatActivity {
             shareZip(result);
         }
     }
+
 }
