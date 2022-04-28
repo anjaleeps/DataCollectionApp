@@ -15,6 +15,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
@@ -126,6 +127,10 @@ public class ProjectRecordsActivity extends AppCompatActivity {
         });
     }
 
+    private boolean isExternalStorageWritable() {
+        return Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
+    }
+
     public void shareCSV(View view){
         String csv = createAndWriteCSV();
         try {
@@ -164,7 +169,13 @@ public class ProjectRecordsActivity extends AppCompatActivity {
     }
 
     private File createZip(){
-        File zip = new File(getCacheDir(), project.getProjectName()+".zip");
+        File zip =null;
+        if(isExternalStorageWritable()){
+            zip = new File(this.getExternalCacheDir(), project.getProjectName()+".zip");
+        }
+        else{
+            zip = new File(getCacheDir(), project.getProjectName()+".zip");
+        }
         try {
             zip(cacheFilePaths,zip.getAbsolutePath());
         } catch (IOException e) {
@@ -177,7 +188,15 @@ public class ProjectRecordsActivity extends AppCompatActivity {
     private String saveBitmap(Bitmap bitmap, String url){
         File filePath = null;
         try {
-            filePath = new File(getCacheDir(),FilenameUtils.getBaseName(url)+".jpg" );
+            if(isExternalStorageWritable()){
+                filePath = new File(this.getExternalCacheDir(),FilenameUtils.getBaseName(url)+".jpg" );
+            }
+            else{
+                filePath = new File(getCacheDir(),FilenameUtils.getBaseName(url)+".jpg" );
+            }
+            if(filePath.exists()){
+                filePath.delete();
+            }
             OutputStream outputStream = new FileOutputStream(filePath);
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
             outputStream.flush();
@@ -192,7 +211,17 @@ public class ProjectRecordsActivity extends AppCompatActivity {
 
     private String createAndWriteCSV(){
         List<String[]> data = getData();
-        String csv = (this.getFilesDir().getAbsolutePath() + "/"+project.getProjectName()+".csv");
+        String csv = null;
+        if (isExternalStorageWritable()){
+            csv = (this.getExternalCacheDir().getAbsolutePath() + "/"+project.getProjectName()+".csv");
+        }
+        else{
+            csv = (this.getCacheDir().getAbsolutePath() + "/"+project.getProjectName()+".csv");
+        }
+        File file = new File(csv);
+        if(file.exists()){
+            file.delete();
+        }
         CSVWriter writer = null;
         Log.d(TAG,csv);
         try {
